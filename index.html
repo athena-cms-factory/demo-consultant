@@ -12,15 +12,16 @@
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <title>demo-consultant</title>
-    <script type="module" crossorigin src="./assets/index-rU6zB-qH.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CZl3nFu1.css">
+    <script type="module" crossorigin src="./assets/index-BbzjRrD_.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-ujtvEvIf.css">
   </head>
   <body>
     <div id="root"></div>
     <script>
       if ('serviceWorker' in navigator) {
-        // Service Worker disabled for docked sites - uncomment for production
-        // navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed: ', err));
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed: ', err));
+        });
       }
     </script>
   </body>

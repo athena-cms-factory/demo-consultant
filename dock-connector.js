@@ -110,6 +110,55 @@
                 return;
             }
 
+            if (key === 'content_top_offset') {
+                document.documentElement.style.setProperty('--content-top-offset', value + 'px');
+                return;
+            }
+
+            if (key === 'header_height') {
+                document.documentElement.style.setProperty('--header-height', value + 'px');
+                return;
+            }
+
+            if (key === 'header_transparent') {
+                if (value === true) {
+                    document.documentElement.style.setProperty('--header-bg', 'transparent');
+                    document.documentElement.style.setProperty('--header-blur', 'none');
+                    document.documentElement.style.setProperty('--header-border', 'none');
+                } else {
+                    document.documentElement.style.removeProperty('--header-bg');
+                    document.documentElement.style.removeProperty('--header-blur');
+                    document.documentElement.style.removeProperty('--header-border');
+                }
+                return;
+            }
+
+            if (key === 'header_visible') {
+                const nav = document.querySelector('nav.fixed.top-0');
+                if (nav) nav.style.display = value ? 'flex' : 'none';
+                return;
+            }
+
+            if (key.startsWith('header_show_')) {
+                // We herladen voor element toggles omdat die in de JSX structuur zitten
+                // Voor een echt 'live' effect zouden we classes kunnen toggelen, 
+                // maar herladen is betrouwbaarder voor structurele wijzigingen.
+                // We kunnen echter ook proberen om de elementen direct te verbergen:
+                const elementMap = {
+                    'header_show_logo': '.relative.w-12.h-12',
+                    'header_show_title': 'span.text-2xl.font-serif',
+                    'header_show_tagline': 'span.text-\\[10px\\]',
+                    'header_show_button': 'button, .bg-primary',
+                    'header_show_navbar': 'nav.hidden.md\\:flex'
+                };
+                const selector = elementMap[key];
+                if (selector) {
+                    const els = document.querySelectorAll(selector);
+                    els.forEach(el => el.style.display = value ? '' : 'none');
+                }
+                return;
+            }
+
             if (isGlobal || targetTheme === currentTheme) {
                 const vars = themeMappings[currentTheme][key];
                 if (vars) {
@@ -239,26 +288,30 @@
     document.addEventListener('click', (e) => {
         const target = e.target.closest('[data-dock-bind]');
         if (target && window.parent !== window) {
+            if (e.shiftKey) return;
+
             e.preventDefault();
             e.stopPropagation();
 
             const binding = JSON.parse(target.getAttribute('data-dock-bind'));
-            const dockType = target.getAttribute('data-dock-type') || (isMediaBind(binding) ? 'media' : 'text');
+            const dockType = target.getAttribute('data-dock-type') || (
+                (binding.key && (binding.key.toLowerCase().includes('foto') || 
+                                 binding.key.toLowerCase().includes('image') || 
+                                 binding.key.toLowerCase().includes('img') || 
+                                 binding.key.toLowerCase().includes('afbeelding') || 
+                                 binding.key.toLowerCase().includes('video'))) ? 'media' : 'text'
+            );
 
-            // Extract current value smartly
             let currentValue = target.getAttribute('data-dock-current') || target.innerText;
             
-            // Link specific extraction
             if (dockType === 'link') {
                 currentValue = {
                     label: target.getAttribute('data-dock-label') || target.innerText,
                     url: target.getAttribute('data-dock-url') || ""
                 };
-            } else if (!currentValue) {
-                // Fallback for direct <img> or container with <img>
+            } else if (!currentValue || dockType === 'media') {
                 const img = target.tagName === 'IMG' ? target : target.querySelector('img');
                 if (img) {
-                    // Try to get the relative filename from the absolute src
                     const src = img.getAttribute('src');
                     if (src && src.includes('/images/')) {
                         currentValue = src.split('/images/').pop().split('?')[0];
