@@ -15,7 +15,7 @@ export default function EditableMedia({ src, alt, className, cmsBind, ...props }
   }
 
   const finalSrc = (src && !src.startsWith('http') && !src.startsWith('/') && !src.startsWith('data:'))
-    ? `${import.meta.env.BASE_URL}images/${src}`.replace(/\/+/g, '/')
+    ? `${import.meta.env.BASE_URL}${src.startsWith('images/') ? '' : 'images/'}${src}`.replace(/\/+/g, '/')
     : src;
 
   const isVideo = src && (src.endsWith('.mp4') || src.endsWith('.webm'));
@@ -35,8 +35,8 @@ export default function EditableMedia({ src, alt, className, cmsBind, ...props }
   }) : null;
 
   return (
-    <div 
-      className={`relative group ${className} cursor-pointer hover:ring-2 hover:ring-blue-400/40 rounded-sm transition-all duration-200`} 
+    <div
+      className={`relative group ${className} cursor-pointer hover:ring-2 hover:ring-blue-400/40 rounded-sm transition-all duration-200`}
       data-dock-bind={dockBind}
       data-dock-type="media"
       title={cmsBind ? `Klik om "${cmsBind.key}" te bewerken in de Dock` : undefined}
