@@ -1,4 +1,3 @@
-@import "tailwindcss";
 
 /* 
    Athena Modern Theme Integration
@@ -29,7 +28,8 @@
   }
 
   .cart-overlay {
-    @apply w-full max-w-md bg-background h-full shadow-2xl flex flex-col p-8;
+    background-color: var(--color-background);
+    @apply w-full max-w-md  h-full shadow-2xl flex flex-col p-8;
     animation: slideIn 0.3s ease-out;
   }
 

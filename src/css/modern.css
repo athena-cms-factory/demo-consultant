@@ -1,5 +1,5 @@
-/* Athena Modern Theme - Tailwind CSS v4 */
 @import "tailwindcss";
+/* Athena Modern Theme - Tailwind CSS v4 */
 
 @theme {
   /* Design Tokens - Deze worden door de AI overschreven per project */
@@ -80,7 +80,7 @@
     font-family: var(--font-serif);
     font-weight: 700;
     line-height: 1.2;
-    @apply tracking-tight;
+    letter-spacing: -0.025em;
   }
 
   h2, h3, h4 {
@@ -88,7 +88,7 @@
     font-family: var(--font-serif);
     font-weight: 700;
     line-height: 1.2;
-    @apply tracking-tight;
+    letter-spacing: -0.025em;
   }
 
   /* Reveal animatie bij binnenkomst (React 19 / Tailwind v4 friendly) */
@@ -124,3 +124,4 @@
     @apply px-3 py-1 bg-accent/10 text-accent text-xs font-bold uppercase tracking-widest rounded-full;
   }
 }
+.btn-primary:hover { opacity: 0.9; }
