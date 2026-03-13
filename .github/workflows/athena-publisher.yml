@@ -114,6 +114,6 @@ jobs:
             exit 1
           fi
           TARGET_REPO="$DEFAULT_OWNER/$SITE"
-          REMOTE_URL="https://${API_TOKEN_GITHUB}@github.com/${TARGET_REPO}.git"
+          REMOTE_URL="https://x-access-token:${API_TOKEN_GITHUB}@github.com/${TARGET_REPO}.git"
           SPLIT_SHA=$(git subtree split --prefix=$PREFIX $BRANCH)
           git push "$REMOTE_URL" "$SPLIT_SHA":refs/heads/main --force
