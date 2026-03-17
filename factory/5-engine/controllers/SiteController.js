@@ -69,7 +69,13 @@ export class SiteController {
             const sitePath = path.join(dir, site);
             let siteType = isNative ? 'basis' : 'static-legacy';
             let status = 'local';
+            const hasPackageJson = fs.existsSync(path.join(sitePath, 'package.json'));
             let isInstalled = fs.existsSync(path.join(sitePath, 'node_modules'));
+
+            // Override siteType if it's actually an app in the external folder
+            if (!isNative && hasPackageJson) {
+                siteType = 'vite-app'; 
+            }
 
             const configPath = path.join(sitePath, 'athena-config.json');
             if (fs.existsSync(configPath)) {
@@ -86,6 +92,7 @@ export class SiteController {
                 name: site,
                 isNative,
                 isExternal: !isNative,
+                hasPackageJson,
                 path: sitePath,
                 port: sitePort,
                 localUrl: `http://localhost:5000/previews/${site}/`,
@@ -110,10 +117,13 @@ export class SiteController {
 
         if (!fs.existsSync(siteDir)) throw new Error(`Site '${id}' niet gevonden.`);
 
-        // 🔱 v8.8 Intelligent Preview for External Sites
-        if (isExternal) {
-            console.log(`📂 Serving external site ${id} via API static root`);
-            return { success: true, status: 'ready', url: `http://localhost:5000/${id}/` };
+        const hasPackageJson = fs.existsSync(path.join(siteDir, 'package.json'));
+
+        // 🔱 v8.8 Intelligent Preview
+        // Alleen ECHT statische sites (zonder package.json) via de API Hub direct serveren
+        if (isExternal && !hasPackageJson) {
+            console.log(`📂 Serving external static site ${id} via API static root`);
+            return { success: true, status: 'ready', url: `http://localhost:5000/previews/${id}/` };
         }
 
         const previewPort = this.getSitePort(id, siteDir);

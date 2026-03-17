@@ -476,8 +476,8 @@
     "status": "local"
   },
   {
-    "id": "dirk-de-witte-kappers",
-    "name": "dirk-de-witte-kappers",
+    "id": "de-stijlvolle-kapper",
+    "name": "de-stijlvolle-kapper",
     "isNative": false,
     "isExternal": true,
     "siteType": "static-legacy",
@@ -485,7 +485,7 @@
     "governance_mode": "dev-mode",
     "repoUrl": null,
     "liveUrl": null,
-    "localUrl": "http://localhost:5008/dirk-de-witte-kappers/",
+    "localUrl": "http://localhost:5008/de-stijlvolle-kapper/",
     "port": 5008,
     "status": "local"
   },

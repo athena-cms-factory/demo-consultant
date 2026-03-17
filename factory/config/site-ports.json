@@ -35,7 +35,6 @@
   "jets-archive": 6225,
   "academy-1": 5006,
   "bakkerij-de-graankorrel": 5007,
-  "dirk-de-witte-kappers": 5008,
   "dossier-demo": 5010,
   "gentse-dakwerken": 5011,
   "kdc-it-advies": 5012,
@@ -54,5 +53,6 @@
   "test-portfolio": 5205,
   "test-real-estate": 5206,
   "test-store-fashion": 5207,
-  "test-store-payment": 5208
+  "test-store-payment": 5208,
+  "de-stijlvolle-kapper": 5008
 }
