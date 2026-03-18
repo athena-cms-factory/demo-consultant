@@ -374,7 +374,9 @@ const DockFrame = () => {
 
   const toggleSectionVisibility = (sectionId) => {
     console.log(`👁️ Toggling visibility for: ${sectionId}`);
-    const sectionIndex = siteStructure?.data?.section_settings?.findIndex(s => s.id === sectionId);
+    const sectionIndex = Array.isArray(siteStructure?.data?.section_settings) 
+      ? siteStructure?.data?.section_settings?.findIndex(s => s.id === sectionId)
+      : -1; // Objecten hebben geen index in de traditionele zin hier
     if (sectionIndex === -1 || sectionIndex === undefined) {
       console.warn(`⚠️ Cannot find section index for ${sectionId} in section_settings`);
       return;
@@ -1102,15 +1104,23 @@ const DockFrame = () => {
                   <div className="flex gap-1 items-center">
                     <button
                       onClick={() => toggleSectionVisibility(section)}
-                      className={`p-1 rounded mr-1 ${siteStructure?.data?.section_settings?.find(s => s.id === section)?.visible === false ? 'text-slate-300 bg-slate-100 hover:bg-slate-200' : 'text-blue-500 bg-blue-50 hover:bg-blue-100'}`}
-                      title={siteStructure?.data?.section_settings?.find(s => s.id === section)?.visible === false ? "Sectie is verborgen op de site. Klik om te tonen." : "Sectie is zichtbaar op de site. Klik om te verbergen."}
-                    >
-                      {siteStructure?.data?.section_settings?.find(s => s.id === section)?.visible === false ? (
+                      className={`p-1 rounded mr-1 ${
+                        (Array.isArray(siteStructure?.data?.section_settings) 
+                          ? siteStructure?.data?.section_settings?.find(s => s.id === section)?.visible === false 
+                          : siteStructure?.data?.section_settings?.[section]?.visible === false) 
+                        ? 'text-slate-300 bg-slate-100 hover:bg-slate-200' : 'text-blue-500 bg-blue-50 hover:bg-blue-100'}`}
+                      title={(Array.isArray(siteStructure?.data?.section_settings) 
+                        ? siteStructure?.data?.section_settings?.find(s => s.id === section)?.visible === false 
+                        : siteStructure?.data?.section_settings?.[section]?.visible === false) 
+                        ? "Sectie is verborgen op de site. Klik om te tonen." : "Sectie is zichtbaar op de site. Klik om te verbergen."}
+                      >
+                      {(Array.isArray(siteStructure?.data?.section_settings) 
+                        ? siteStructure?.data?.section_settings?.find(s => s.id === section)?.visible === false 
+                        : siteStructure?.data?.section_settings?.[section]?.visible === false) ? (
                         <i className="fa-solid fa-eye-slash text-[10px]"></i>
                       ) : (
                         <i className="fa-solid fa-eye text-[10px]"></i>
-                      )}
-                    </button>
+                      )}                    </button>
                     <div className="flex gap-1">
                     <button
                       onClick={() => moveSection(section, 'up')}
@@ -1155,10 +1165,14 @@ const DockFrame = () => {
                         max="80" 
                         step="4"
                         className="w-full accent-blue-500"
-                        value={siteStructure?.data?.section_settings?.find(s => s.id === section)?.padding || 32}
+                        value={(Array.isArray(siteStructure?.data?.section_settings) 
+                          ? siteStructure?.data?.section_settings?.find(s => s.id === section)?.padding 
+                          : siteStructure?.data?.section_settings?.[section]?.padding) || 32}
                         onChange={(e) => {
                           const val = parseInt(e.target.value);
-                          const idx = siteStructure?.data?.section_settings?.findIndex(s => s.id === section);
+                          const idx = Array.isArray(siteStructure?.data?.section_settings) 
+                            ? siteStructure?.data?.section_settings?.findIndex(s => s.id === section)
+                            : -1;
                           if (idx !== -1) {
                             // Direct feedback via postMessage
                             if (iframeRef.current) {
