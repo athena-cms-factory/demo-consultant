@@ -11,6 +11,14 @@ export default function Footer({ data }) {
   const btw = contactInfo.btw_nummer || contactInfo.btw || '';
   const linkedin = contactInfo.linkedin_url || contactInfo.linkedin || '';
 
+  const getImageUrl = (url) => {
+    if (!url) return '';
+    if (typeof url === 'object') url = url.text || url.url || '';
+    if (url.startsWith('http') || url.startsWith('data:')) return url;
+    const base = import.meta.env.BASE_URL || '/';
+    return (base + '/images/' + url).replace(new RegExp('/+', 'g'), '/');
+  };
+
   return (
     <footer className="py-24 bg-slate-900 text-slate-400 border-t border-slate-800 relative overflow-hidden">
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-[80px] -ml-32 -mb-32"></div>
@@ -77,7 +85,7 @@ export default function Footer({ data }) {
         <div className="pt-12 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
           <p>&copy; {new Date().getFullYear()} {naam}. Alle rechten voorbehouden.</p>
           <div className="flex items-center gap-2 opacity-50">
-            <img src="./athena-icon.svg" alt="Athena Logo" className="w-5 h-5" />
+            <img src={getImageUrl('athena-icon.svg')} alt="Athena Logo" className="w-5 h-5" />
             <span>Gemaakt met Athena CMS Factory</span>
           </div>
         </div>
