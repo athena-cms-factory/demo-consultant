@@ -304,6 +304,10 @@ app.post('/api/update', (req, res) => {
             }
 
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+            
+            // 🔱 Auto-Aggregation
+            aggregateAllData(path.resolve(root, '../sites', activeProject));
+
             res.json({ success: true });
         } else {
             // Klassieke tabel array update
@@ -315,6 +319,10 @@ app.post('/api/update', (req, res) => {
 
                 const contentToWrite = wasArray ? data : data[0];
                 fs.writeFileSync(filePath, JSON.stringify(contentToWrite, null, 2));
+                
+                // 🔱 Auto-Aggregation
+                aggregateAllData(path.resolve(root, '../sites', activeProject));
+
                 res.json({ success: true });
             } else {
                 res.status(404).json({ error: "Rij niet gevonden" });
@@ -340,6 +348,10 @@ app.post('/api/upload-image', express.raw({ type: 'image/*', limit: '10mb' }), a
 
         fs.writeFileSync(path.join(targetDir, filename), req.body);
         console.log(`📸 [UPLOAD] ${filename} -> ../sites/${activeProject}/public/images`);
+
+        // 🔱 Auto-Aggregation
+        aggregateAllData(path.resolve(root, '../sites', activeProject));
+
         res.json({ success: true, filename });
     } catch (e) {
         console.error("Upload error:", e.message);
@@ -362,6 +374,10 @@ app.post('/api/delete-image', async (req, res) => {
 
         fs.unlinkSync(filePath);
         console.log(`🗑️ [DELETE] ${filename} verwijderd uit ../sites/${activeProject}/public/images`);
+
+        // 🔱 Auto-Aggregation
+        aggregateAllData(path.resolve(root, '../sites', activeProject));
+
         res.json({ success: true });
     } catch (e) {
         console.error("Delete error:", e.message);
@@ -534,6 +550,10 @@ app.post('/api/generate-image', async (req, res) => {
                             const imageBuffer = Buffer.from(imagePart.inlineData.data, 'base64');
                             fs.writeFileSync(path.join(targetDir, safeName), imageBuffer);
                             console.log(`✅ [GEMINI] Succes met ${cleanModelName}`);
+                            
+                            // 🔱 Auto-Aggregation
+                            aggregateAllData(path.resolve(root, '../sites', activeProject));
+
                             resultSent = true;
                             return res.json({ success: true, filename: safeName, provider: `gemini (${cleanModelName})` });
                         } else {
@@ -563,6 +583,10 @@ app.post('/api/generate-image', async (req, res) => {
                         if (buffer.length > 1000) {
                             fs.writeFileSync(path.join(targetDir, safeName), buffer);
                             console.log(`✅ [POLLINATIONS] Succes bij poging ${attempt}.`);
+
+                            // 🔱 Auto-Aggregation
+                            aggregateAllData(path.resolve(root, '../sites', activeProject));
+
                             resultSent = true;
                             return res.json({ success: true, filename: safeName, provider: 'pollinations' });
                         }
@@ -580,6 +604,10 @@ app.post('/api/generate-image', async (req, res) => {
             const response = await fetch(placeholderUrl);
             const buffer = Buffer.from(await response.arrayBuffer());
             fs.writeFileSync(path.join(targetDir, safeName), buffer);
+
+            // 🔱 Auto-Aggregation
+            aggregateAllData(path.resolve(root, '../sites', activeProject));
+
             resultSent = true;
             return res.json({
                 success: true,
