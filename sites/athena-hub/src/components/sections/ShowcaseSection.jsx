@@ -1,9 +1,60 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { DisplayConfigContext } from '../DisplayConfigContext';
 
-const ShowcaseSection = ({ sectionName, items, sectionStyle }) => {
+const ShowcaseSection = ({ sectionName, items, sectionStyle, data: allData }) => {
   const displayConfig = useContext(DisplayConfigContext);
   const sectionConfig = displayConfig?.sections?.[sectionName] || { visible_fields: [], hidden_fields: [], inline_fields: [] };
+  
+  const [showArchive, setShowArchive] = useState(false);
+  const [archiveData, setArchiveData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Dynamische organisatie bepaling uit _system.json of window.location
+  const getOrgName = () => {
+    const system = allData?._system || [];
+    const githubUser = system.find(s => s.Key === 'github_user')?.Value;
+    if (githubUser) return githubUser;
+
+    // Fallback: extract van hostname (bijv. athena-cms-factory.github.io)
+    const host = window.location.hostname;
+    if (host.includes('.github.io')) {
+      return host.split('.')[0];
+    }
+    return 'athena-cms-factory'; // Ultieme fallback
+  };
+
+  const fetchArchive = async () => {
+    if (archiveData.length > 0) {
+      setShowArchive(!showArchive);
+      return;
+    }
+    setLoading(true);
+    const org = getOrgName();
+    try {
+      const response = await fetch(`https://api.github.com/orgs/${org}/repos?sort=updated&per_page=100`);
+      const repos = await response.json();
+      
+      const excludeList = ['athena-x', 'athena'];
+      
+      const filteredData = repos
+        .filter(repo => !repo.fork && !excludeList.includes(repo.name)) 
+        .map(repo => ({
+          name: repo.name.replace(/-/g, ' '),
+          type: repo.language || 'Project',
+          description: repo.description || 'Geen omschrijving beschikbaar.',
+          githubLink: repo.html_url,
+          liveLink: repo.has_pages ? `https://${org}.github.io/${repo.name}/` : repo.homepage
+        }));
+
+      setArchiveData(filteredData);
+      setShowArchive(true);
+    } catch (e) {
+      console.error("Fout bij ophalen archive:", e);
+    }
+    setLoading(false);
+  };
+
+  const visibleItems = items.slice(0, 6);
 
   return (
     <section 
@@ -33,7 +84,7 @@ const ShowcaseSection = ({ sectionName, items, sectionStyle }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {items.map((item, index) => {
+          {visibleItems.map((item, index) => {
             const allKeys = Object.keys(item).filter(k => 
                 !['absoluteIndex', '_hidden', 'id', 'pk', 'uuid'].some(tf => k.toLowerCase().includes(tf))
             );
@@ -113,6 +164,75 @@ const ShowcaseSection = ({ sectionName, items, sectionStyle }) => {
               </div>
             );
           })}
+        </div>
+
+        {/* --- ARCHIVE SECTION --- */}
+        <div className="mt-20 flex flex-col items-center">
+          <button
+            onClick={fetchArchive}
+            disabled={loading}
+            className={`
+              group relative px-12 py-5 rounded-full font-black uppercase tracking-[0.2em] text-sm overflow-hidden transition-all duration-500
+              ${showArchive ? 'bg-primary text-white shadow-2xl scale-105' : 'bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white shadow-xl'}
+            `}
+          >
+            <span className="relative z-10 flex items-center gap-3">
+              {loading ? 'Laden...' : (showArchive ? 'Sluit Archief' : 'Volledige Lijst / Archief')}
+              {!loading && <i className={`fa-solid ${showArchive ? 'fa-xmark' : 'fa-box-archive'}`}></i>}
+            </span>
+          </button>
+
+          {showArchive && archiveData.length > 0 && (
+            <div className="mt-16 w-full animate-reveal">
+              <div className="bg-white rounded-[3rem] p-8 md:p-12 shadow-2xl border border-slate-100">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b-2 border-slate-50">
+                        <th className="py-6 px-4 font-black uppercase tracking-widest text-[10px] text-slate-400">Type</th>
+                        <th className="py-6 px-4 font-black uppercase tracking-widest text-[10px] text-slate-400">Project</th>
+                        <th className="py-6 px-4 font-black uppercase tracking-widest text-[10px] text-slate-400">Omschrijving</th>
+                        <th className="py-6 px-4 font-black uppercase tracking-widest text-[10px] text-slate-400 text-right">Links</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {archiveData.map((project, idx) => (
+                        <tr key={idx} className="group hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0">
+                          <td className="py-6 px-4">
+                            <span className="px-3 py-1 bg-slate-100 rounded-full text-[9px] font-bold uppercase text-slate-500">
+                              {project.type || 'website'}
+                            </span>
+                          </td>
+                          <td className="py-6 px-4">
+                            <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors block">
+                              <h4 className="font-bold text-primary text-lg">{project.name}</h4>
+                            </a>
+                          </td>
+                          <td className="py-6 px-4">
+                            <p className="text-slate-600 font-light italic line-clamp-1 text-sm">{project.description}</p>
+                          </td>
+                          <td className="py-6 px-4 text-right">
+                            <div className="flex justify-end gap-4">
+                              {project.githubLink && (
+                                <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-primary transition-colors" title="GitHub">
+                                  <i className="fa-brands fa-github text-xl"></i>
+                                </a>
+                              )}
+                              {project.liveLink && (
+                                <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-accent transition-colors" title="Live Site">
+                                  <i className="fa-solid fa-arrow-up-right-from-square text-lg"></i>
+                                </a>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
