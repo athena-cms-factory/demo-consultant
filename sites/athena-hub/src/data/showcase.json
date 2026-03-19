@@ -30,14 +30,14 @@
     "image": "hero-1770476346310.jpeg"
   },
   {
-    "name": "Lex & Justitia Advocaten",
-    "category": "Juridische Dienstverlening",
-    "description": "Juridische expertise in ondernemingsrecht en vastgoedrecht.",
+    "name": "Academy-1",
+    "category": "Educatie",
+    "description": "Een modern leerplatform voor cursussen en trainingen.",
     "link": {
       "label": "BEKIJK PROJECT",
-      "url": "https://athena-cms-factory.github.io/lex-justitia/"
+      "url": "https://athena-cms-factory.github.io/academy-1/"
     },
-    "image": "showcase-lex-justitia.webp"
+    "image": "site-logo.svg"
   },
   {
     "name": "De Schaar",
@@ -110,13 +110,13 @@
     "image": "showcase-gentse-dakwerken.webp"
   },
   {
-    "name": "Academy-1",
-    "category": "Educatie",
-    "description": "Een modern leerplatform voor cursussen en trainingen.",
+    "name": "Lex & Justitia Advocaten",
+    "category": "Juridische Dienstverlening",
+    "description": "Juridische expertise in ondernemingsrecht en vastgoedrecht.",
     "link": {
       "label": "BEKIJK PROJECT",
-      "url": "https://athena-cms-factory.github.io/academy-1/"
+      "url": "https://athena-cms-factory.github.io/lex-justitia/"
     },
-    "image": "site-logo.svg"
+    "image": "showcase-lex-justitia.webp"
   }
 ]
