@@ -91,7 +91,7 @@ jobs:
           BRANCH="${{ github.ref_name }}"
           
           # DYNAMISCHE TARGET ROUTING (v8.2)
-          if [ "${{ github.repository }}" == "KarelTestSpecial/athena-x" ]; then
+          if [ "${{ github.repository }}" == "athenacmsfactory/athena-x" ]; then
             TARGET_ORG="ath-x"
             echo "🛠️ Development environment detected. Targeting organization: $TARGET_ORG"
           else
