@@ -7,7 +7,7 @@ async function forceSync() {
 
     console.log("🚀 STARTING FORCED SYNC TO GOOGLE SHEETS...");
     try {
-        await dm.syncToSheet('de-salon-site');
+        await dm.pushToSheet('de-salon-site');
         console.log("✅ SYNC SUCCESSFUL!");
     } catch (e) {
         console.error("❌ SYNC FAILED:", e.message);

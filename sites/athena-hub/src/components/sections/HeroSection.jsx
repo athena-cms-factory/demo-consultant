@@ -5,9 +5,9 @@ const HeroSection = ({ items: data, sectionName, siteSettings }) => {
   const hero = data[0];
   const settings = siteSettings || {};
 
-  // v8.8 Hub-specifieke herstelactie
-  const heroTitle = hero.title || hero.titel || settings.site_name || 'Athena Hub';
-  const heroSubtitle = hero.subtitle || hero.ondertitel || settings.tagline || '';
+  // v8.8 Hub-specifieke herstelactie - respecteer lege strings
+  const heroTitle = (hero.title !== undefined && hero.title !== null) ? hero.title : (hero.titel || '');
+  const heroSubtitle = (hero.subtitle !== undefined && hero.subtitle !== null) ? hero.subtitle : (hero.ondertitel || '');
   const rawImg = hero.image || 'hero-athenahub-1-1770366162431.webp';
   const imgSrc = (rawImg || "").startsWith('http') ? rawImg : `${import.meta.env.BASE_URL}images/${rawImg}`;
 

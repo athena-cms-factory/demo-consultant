@@ -103,7 +103,7 @@ app.use(express.static(root));
 // --- STRATEGY CHAT API ---
 app.post('/api/onboard/chat', async (req, res) => {
     const { history, companyName } = req.body;
-    
+
     const systemPrompt = `
         Je bent de Digital Strategist van Athena CMS. Jouw doel is om een nieuwe klant (${companyName || 'onbekend'}) te helpen hun online strategie te bepalen.
         Focus op:
@@ -119,7 +119,7 @@ app.post('/api/onboard/chat', async (req, res) => {
     const fullPrompt = `${systemPrompt}\n\nINTERVIEW HISTORY:\n${history ? history.map(h => `${h.role}: ${h.content}`).join('\n') : ''}\n\nStrategist:`;
 
     try {
-        const response = await generateWithAI(fullPrompt, { 
+        const response = await generateWithAI(fullPrompt, {
             isJson: false,
             modelStack: process.env.AI_MODEL_DEFAULT || process.env.AI_MODEL || "gemini-3-flash-preview"
         });
@@ -134,7 +134,7 @@ app.post('/api/onboard/finalize', async (req, res) => {
     const { companyName, history } = req.body;
     const safeName = companyName.toLowerCase().replace(/[^a-z0-9]/g, '-');
     const clientDir = path.join(root, 'input', safeName);
-    
+
     const prompt = `
         Vat het volgende interview samen voor een technisch dossier.
         INTERVIEW:
@@ -152,7 +152,7 @@ app.post('/api/onboard/finalize', async (req, res) => {
     try {
         const report = await generateWithAI(prompt, { isJson: true });
         if (!fs.existsSync(clientDir)) fs.mkdirSync(clientDir, { recursive: true });
-        
+
         fs.writeFileSync(path.join(clientDir, 'discovery.json'), JSON.stringify(report, null, 2));
         res.json({ success: true, report });
     } catch (e) {
@@ -225,7 +225,7 @@ app.post('/api/sites/:id/athenify', async (req, res) => res.json(await siteCtrl.
 app.post('/api/sites/update-deployment', (req, res) => res.json(siteCtrl.updateDeployment(req.body)));
 app.post('/api/sites/:id/pull-from-sheet', async (req, res) => res.json(await siteCtrl.pullFromSheet(req.params.id)));
 app.post('/api/sites/:id/pull-to-temp', async (req, res) => res.json(await siteCtrl.pullToTemp(req.params.id)));
-app.post('/api/sites/:id/sync-to-sheet', async (req, res) => res.json(await siteCtrl.syncToSheet(req.params.id)));
+app.post('/api/sites/:id/sync-to-sheet', async (req, res) => res.json(await siteCtrl.pushToSheet(req.params.id)));
 app.post('/api/sites/:id/link-sheet', async (req, res) => res.json(await siteCtrl.linkSheet(req.params.id, req.body.sheetUrl)));
 app.post('/api/sites/:id/safe-pull', async (req, res) => res.json(await siteCtrl.safePullFromGitHub(req.params.id)));
 app.get('/api/sites/:id/compare-sources', async (req, res) => res.json(await siteCtrl.compareSiteSources(req.params.id)));
@@ -254,7 +254,7 @@ app.post('/api/set-site', async (req, res) => {
     }
 });
 
-app.post('/api/sync-to-sheets/:id', async (req, res) => res.json(await siteCtrl.syncToSheet(req.params.id)));
+app.post('/api/sync-to-sheets/:id', async (req, res) => res.json(await siteCtrl.pushToSheet(req.params.id)));
 app.post('/api/pull-from-sheets/:id', async (req, res) => res.json(await siteCtrl.pullFromSheet(req.params.id)));
 
 // --- SERVER API ---
@@ -282,10 +282,10 @@ app.post('/api/storage/enforce', async (req, res) => res.json(await doctorCtrl.e
 app.post('/api/storage/prune-all', async (req, res) => {
     const auditResults = doctorCtrl.audit();
     const actions = auditResults.filter(r => r.policy === 'dormant' && r.hydration === 'hydrated').map(r => ({ site: r.site, ...doctorCtrl.dehydrate(r.site) }));
-    
+
     // Ook temp data opschonen bij een prune-all
     const tempResult = await doctorCtrl.cleanupTempData();
-    
+
     res.json({ success: true, actions, tempResult });
 });
 app.post('/api/storage/cleanup-temp', async (req, res) => res.json(await doctorCtrl.cleanupTempData()));
@@ -386,7 +386,7 @@ app.use('/previews/:id', async (req, res, next) => {
         // We verwijderen /previews/:id van het pad voor de static server
         const subPath = req.url === '/' ? '/index.html' : req.url;
         const filePath = path.join(siteDir, subPath.split('?')[0]);
-        
+
         if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
             return res.sendFile(filePath);
         } else if (fs.existsSync(path.join(siteDir, 'index.html'))) {
@@ -398,7 +398,7 @@ app.use('/previews/:id', async (req, res, next) => {
 
     // Voor native sites: Proxy naar de Vite dev server
     const previewPort = siteCtrl.getSitePort(siteId, siteDir);
-    
+
     return createProxyMiddleware({
         target: `http://127.0.0.1:${previewPort}`,
         changeOrigin: true,

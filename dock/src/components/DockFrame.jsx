@@ -127,17 +127,17 @@ const DockFrame = () => {
   const getSectionSetting = (sectionId, property, defaultValue = null) => {
     const settings = siteStructure?.data?.section_settings;
     if (!settings) return defaultValue;
-    
+
     if (Array.isArray(settings)) {
       const found = settings.find(s => s.id === sectionId);
       return (found && found[property] !== undefined) ? found[property] : defaultValue;
     }
-    
+
     if (typeof settings === 'object') {
       const found = settings[sectionId];
       return (found && found[property] !== undefined) ? found[property] : defaultValue;
     }
-    
+
     return defaultValue;
   };
 
@@ -246,7 +246,7 @@ const DockFrame = () => {
     if (iframeRef.current) {
       // 1. Determine target file
       let file = 'style_config';
-      
+
       // Auto-detect based on current data
       const possibleFiles = ['site_settings', 'header_settings', 'hero', 'style_config'];
       for (const f of possibleFiles) {
@@ -297,7 +297,7 @@ const DockFrame = () => {
         body: JSON.stringify({ file, index, key, value, formatting, action })
       });
       if (!res.ok) throw new Error(`Server returned ${res.status}`);
-      
+
       // CRUCIAL: Update local state immediately so modals see the change!
       setSiteStructure(prev => {
         const newData = { ...prev.data };
@@ -369,7 +369,7 @@ const DockFrame = () => {
     saveSectionMove(section, direction);
   };
 
-    const toggleSectionVisibility = (sectionId) => {
+  const toggleSectionVisibility = (sectionId) => {
     console.log(`👁️ Toggling visibility for: ${sectionId}`);
     const settings = siteStructure?.data?.section_settings;
     if (!settings) return;
@@ -434,12 +434,12 @@ const DockFrame = () => {
 
         // Update local state to keep Sidebar in sync
         setSiteStructure(prev => {
-           if (!prev) return prev;
-           return {
-               ...prev,
-               data: { ...prev.data, section_order: newOrder },
-               sections: newOrder // Keep sections list in sync
-           };
+          if (!prev) return prev;
+          return {
+            ...prev,
+            data: { ...prev.data, section_order: newOrder },
+            sections: newOrder // Keep sections list in sync
+          };
         });
       } else {
         console.error('❌ Move failed on server:', response.status);
@@ -500,7 +500,7 @@ const DockFrame = () => {
     } catch (err) { console.error(err); }
   };
 
-  const syncToSheets = async () => {
+  const pushToSheets = async () => {
     if (!selectedSite) return;
 
     // GOVERNANCE CHECK
@@ -621,28 +621,28 @@ const DockFrame = () => {
         })
       });
       if (res.ok) {
-         // Direct feedback via postMessage
-         if (iframeRef.current) {
-           iframeRef.current.contentWindow.postMessage({
-             type: 'DOCK_UPDATE_SECTION_CONFIG',
-             file: tableName,
-             config: config
-           }, '*');
-         }
+        // Direct feedback via postMessage
+        if (iframeRef.current) {
+          iframeRef.current.contentWindow.postMessage({
+            type: 'DOCK_UPDATE_SECTION_CONFIG',
+            file: tableName,
+            config: config
+          }, '*');
+        }
 
-         // Update local state
-         setSiteStructure(prev => {
-           if (!prev) return prev;
-           const newData = { ...prev.data };
-           newData.display_config = {
-             ...newData.display_config,
-             sections: {
-               ...(newData.display_config?.sections || {}),
-               [tableName]: config
-             }
-           };
-           return { ...prev, data: newData };
-         });
+        // Update local state
+        setSiteStructure(prev => {
+          if (!prev) return prev;
+          const newData = { ...prev.data };
+          newData.display_config = {
+            ...newData.display_config,
+            sections: {
+              ...(newData.display_config?.sections || {}),
+              [tableName]: config
+            }
+          };
+          return { ...prev, data: newData };
+        });
       }
     } catch (err) { console.error(err); }
   };
@@ -689,10 +689,10 @@ const DockFrame = () => {
     if (hidden.includes(field)) {
       // It is currently hidden, so unhide it
       hidden = hidden.filter(f => f !== field);
-      
+
       // If visible array has elements and NOT this one, we should add it so it renders
       if (visible.length > 0 && !visible.includes(field)) {
-         visible.push(field);
+        visible.push(field);
       }
     } else {
       // It is currently visible, so hide it
@@ -763,13 +763,13 @@ const DockFrame = () => {
 
   const handlePullFromGitHub = async () => {
     // Geen confirm meer nodig hier, want de Modal vraagt het al.
-    
+
     setIsConnected(false);
     try {
       const siteId = typeof selectedSite === 'string' ? selectedSite : (selectedSite.id || selectedSite.name);
       const dashboardPort = import.meta.env.VITE_DASHBOARD_PORT || '5001';
       const hostname = window.location.hostname;
-      
+
       const res = await fetch(`http://${hostname}:${dashboardPort}/api/sites/${siteId}/safe-pull`, {
         method: 'POST'
       });
@@ -801,11 +801,11 @@ const DockFrame = () => {
         console.log("💾 Step: Disk Save (already handled by live updates)");
         await new Promise(r => setTimeout(r, 500));
         break;
-      
+
       case 'sheet':
         console.log("📊 Step: Safe Pull (Backup sheet data to temp before sync)...");
         await fetch(`http://${hostname}:${dashboardPort}/api/sites/${siteId}/pull-to-temp`, { method: 'POST' });
-        
+
         console.log("📊 Step: Sync to Google Sheets...");
         const sheetRes = await fetch(`http://${hostname}:${dashboardPort}/api/sites/${siteId}/sync-to-sheet`, { method: 'POST' });
         const sheetData = await sheetRes.json();
@@ -960,7 +960,7 @@ const DockFrame = () => {
       {/* Main Dock Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar - Shared container for Design Controls & Section Manager */}
-        <aside 
+        <aside
           style={{ width: `${showSectionManager ? middleWidth : leftWidth}px` }}
           className={`bg-slate-50 border-r border-slate-300 overflow-y-auto relative flex-shrink-0 shadow-inner z-40 ${isDragging ? '' : 'transition-[width] duration-300 ease-in-out'}`}
         >
@@ -973,15 +973,15 @@ const DockFrame = () => {
               onToggleSection={toggleSectionVisibility}
               onUpdateLayout={updateLayout}
               onUpdatePadding={(section, val) => {
-                  const idx = Array.isArray(siteStructure?.data?.section_settings) 
-                    ? siteStructure?.data?.section_settings?.findIndex(s => s.id === section)
-                    : -1;
-                  if (idx !== -1) {
-                    if (iframeRef.current) {
-                      iframeRef.current.contentWindow.postMessage({ type: 'DOCK_UPDATE_SECTION_PADDING', section, value: val }, '*');
-                    }
-                    saveData('section_settings', idx, 'padding', val);
+                const idx = Array.isArray(siteStructure?.data?.section_settings)
+                  ? siteStructure?.data?.section_settings?.findIndex(s => s.id === section)
+                  : -1;
+                if (idx !== -1) {
+                  if (iframeRef.current) {
+                    iframeRef.current.contentWindow.postMessage({ type: 'DOCK_UPDATE_SECTION_PADDING', section, value: val }, '*');
                   }
+                  saveData('section_settings', idx, 'padding', val);
+                }
               }}
               onAddItem={addItem}
               onDeleteItem={deleteItem}
@@ -1002,11 +1002,11 @@ const DockFrame = () => {
           )}
 
           {/* Context-aware Resizer */}
-          <div 
-            onMouseDown={() => { 
+          <div
+            onMouseDown={() => {
               if (showSectionManager) isResizingMiddle.current = true;
               else isResizingLeft.current = true;
-              document.body.classList.add('select-none'); 
+              document.body.classList.add('select-none');
             }}
             className="absolute right-0 top-0 w-1.5 h-full cursor-col-resize hover:bg-blue-500 transition-colors z-50 border-r border-slate-300"
             title="Sleep naar links of rechts om het zijpaneel groter of kleiner te maken."

@@ -29,7 +29,7 @@ export class SiteController {
         const paths = this.dataManager.resolvePaths(projectName);
         const basisData = this.dataManager.loadJSON(path.join(paths.dataDir, 'basis.json')) || [];
         const settings = this.dataManager.loadJSON(path.join(paths.dataDir, 'site_settings.json')) || {};
-        
+
         const context = {
             availableFiles: fs.existsSync(paths.dataDir) ? fs.readdirSync(paths.dataDir).filter(f => f.endsWith('.json')) : [],
             basisSample: basisData[0],
@@ -42,7 +42,7 @@ export class SiteController {
         }
 
         if (aiResponse.syncRequired) {
-            await this.dataManager.syncToSheet(projectName);
+            await this.dataManager.pushToSheet(projectName);
         }
 
         return {
@@ -61,7 +61,7 @@ export class SiteController {
 
     _scanDir(dir, isNative) {
         if (!dir || !fs.existsSync(dir)) return [];
-        const sites = fs.readdirSync(dir).filter(f => 
+        const sites = fs.readdirSync(dir).filter(f =>
             fs.statSync(path.join(dir, f)).isDirectory() && !f.startsWith('.') && f !== 'athena-cms'
         );
 
@@ -74,7 +74,7 @@ export class SiteController {
 
             // Override siteType if it's actually an app in the external folder
             if (!isNative && hasPackageJson) {
-                siteType = 'vite-app'; 
+                siteType = 'vite-app';
             }
 
             const configPath = path.join(sitePath, 'athena-config.json');
@@ -154,7 +154,7 @@ export class SiteController {
         let siteType = 'basis';
         const configPath = path.join(siteDir, 'athena-config.json');
         if (fs.existsSync(configPath)) {
-            try { siteType = JSON.parse(fs.readFileSync(configPath, 'utf8')).siteType; } catch(e){}
+            try { siteType = JSON.parse(fs.readFileSync(configPath, 'utf8')).siteType; } catch (e) { }
         }
 
         if (siteType === 'static-legacy') {
@@ -182,7 +182,7 @@ export class SiteController {
                 const reg = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
                 if (reg.services && reg.services[id]) return reg.services[id].port;
             }
-        } catch(e){}
+        } catch (e) { }
 
         // Fallback: use legacy ports file
         const portsFile = path.join(this.root, 'factory/config/site-ports.json');
@@ -192,7 +192,7 @@ export class SiteController {
         }
 
         // Default range 5100+
-        return 5100; 
+        return 5100;
     }
 
     async stopPreview(id) {
@@ -208,7 +208,7 @@ export class SiteController {
 
     async pullFromSheet(id) { return await this.dataManager.pullFromSheet(id); }
     async pullToTemp(id) { return await this.dataManager.pullToTemp(id); }
-    async syncToSheet(id) { return await this.dataManager.syncToSheet(id); }
+    async pushToSheet(id) { return await this.dataManager.pushToSheet(id); }
     async safePullFromGitHub(id) { return await this.execService.runSafePull(id); }
     async compareSiteSources(id) { return await this.dataManager.compareSources(id); }
 
@@ -243,7 +243,7 @@ export class SiteController {
     async linkSheet(id, sheetUrl) {
         console.log(`🔗 Linking sheet for ${id}: ${sheetUrl}`);
         if (!sheetUrl) throw new Error("Geen Google Sheet URL opgegeven.");
-        
+
         // Use the core sheet engine script to handle the linking logic
         return await this.execService.runEngineScript('core/sheet-engine.js', [id, sheetUrl]);
     }

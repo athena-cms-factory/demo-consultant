@@ -110,9 +110,9 @@ export class AthenaDataManager {
     }
 
     /**
-     * Sync from Sheet (Trigger pnpm fetch-data in site)
+     * Pull from Sheet (Trigger pnpm fetch-data in site)
      */
-    async syncFromSheet(projectName) {
+    async pullFromSheet(projectName) {
         const paths = this.resolvePaths(projectName);
         if (!fs.existsSync(paths.siteDir)) throw new Error(`Site directory not found for ${projectName}`);
 
@@ -346,7 +346,7 @@ export class AthenaDataManager {
     /**
      * Sync local JSON data back to Google Sheet
      */
-    async syncToSheet(projectName) {
+    async pushToSheet(projectName) {
         const paths = this.resolvePaths(projectName);
         if (!fs.existsSync(paths.siteDir)) {
              throw new Error(`Site directory not found for ${projectName}`);

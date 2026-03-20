@@ -3,6 +3,8 @@
 ## [2026-03-20] v8.8.5 - Component Interaction & Sheet Manager Recovery
 - [x] **Athena Hub Header Fix**: "Start Nu" knop correct gekoppeld aan de Contact sectie (was hardcoded naar showcase).
 - [x] **Universal Email Detection**: `DefaultSection.jsx` uitgebreid met automatische `mailto:` link detectie voor e-mailadressen.
+- [x] **Engine Method Refactor**: `syncFromSheet` en `syncToSheet` hernoemd naar `pullFromSheet` en `pushToSheet` in `DataManager.js` voor betere intuïtie.
+- [x] **Hero Resilience**: `HeroSection.jsx` aangepast om expliciet lege titels/ondertitels uit de data te respecteren (voorkomt ongewenste fallbacks).
 - [x] **Sheet Manager Backend Recovery**: Ontbrekende `getSiteStructure` en `linkSheet` methodes geïmplementeerd in `SiteController.js`.
 - [x] **API Route Alignment**: Route `/api/sites/:id/link-sheet` toegevoegd aan `server.js` voor compatibiliteit met de frontend.
 - [x] **Dynamic Sheet Loading**: `SheetModal.jsx` in de dashboard-ui aangepast om actief de actuele Sheet URL op te halen bij het openen.

@@ -1,5 +1,5 @@
 - [x] Create DataManager.js skeleton
-- [x] Port Sheet sync logic (syncToSheet, ensureHiddenTabs)
+- [x] Port Sheet sync logic (pushToSheet, ensureHiddenTabs)
 - [x] Port TSV sync logic (syncTSVToJSON)
 - [x] Refactor sync-*.js scripts to use DataManager
 - [x] Refactor dashboard API endpoints to use DataManager
