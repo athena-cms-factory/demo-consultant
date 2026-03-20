@@ -7,6 +7,10 @@
         "tijdsduur",
         "stap"
       ]
+    },
+    "showcase": {
+      "visible_fields": [],
+      "hidden_fields": []
     }
   }
 }
