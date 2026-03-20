@@ -144,10 +144,12 @@ export class SiteController {
             return { success: true, status: 'ready', url: `http://localhost:${previewPort}/${id}/` };
         }
 
-        // 2. STOP ALLE ANDERE PREVIEWS op deze poort (behalve de API zelf!)
-        if (activeProcesses[previewPort]) {
-            console.log(`🧹 Port ${previewPort} is occupied. Stopping old process...`);
-            await this.pm.stopProcessByPort(previewPort);
+        // 2. STOP ALLE ANDERE PREVIEWS (om resources te besparen en poort vrij te maken)
+        for (const port in activeProcesses) {
+            if (activeProcesses[port].type === 'preview') {
+                console.log(`🧹 Stopping previous preview on port ${port} ('${activeProcesses[port].id}')...`);
+                await this.pm.stopProcessByPort(parseInt(port));
+            }
         }
 
         // 3. Start de juiste server op basis van site type
@@ -166,12 +168,46 @@ export class SiteController {
                 await this.pm.startProcess(id, 'preview', previewPort, 'pnpm', ['dev', '--port', previewPort.toString(), '--host'], { cwd: siteDir });
             } catch (e) {
                 console.error(`Fout bij starten preview ${id}:`, e.message);
+                throw e;
             }
         }
 
-        // 🔱 v8.8 Intelligent Preview for all sites via API Hub
-        // We return a URL that goes through the API (port 5000) to solve CORS
-        return { success: true, status: 'ready', url: `http://localhost:5000/previews/${id}/` };
+        // 4. 🔱 v8.8.1 RACE CONDITION FIX: Wacht tot de server ECHT reageert op de poort
+        console.log(`⏳ Waiting for ${id} to be reachable on port ${previewPort}...`);
+        const isReachable = await this._waitForPort(previewPort, 30);
+        
+        if (!isReachable) {
+            throw new Error(`Timeout: Site '${id}' start niet op binnen 30 seconden op poort ${previewPort}.`);
+        }
+
+        console.log(`✅ Site '${id}' is now reachable!`);
+
+        // 🔱 v8.8.1 Native Preview: Geef de DIRECTE URL terug (poort 5100+)
+        // Dit omzeilt proxy-complexiteit nu we zeker weten dat de server up is.
+        return { success: true, status: 'ready', url: `http://localhost:${previewPort}/${id}/` };
+    }
+
+    /**
+     * Helper to wait for a port to be reachable
+     */
+    async _waitForPort(port, timeoutSeconds) {
+        const start = Date.now();
+        const timeout = timeoutSeconds * 1000;
+        
+        while (Date.now() - start < timeout) {
+            try {
+                const response = await fetch(`http://127.0.0.1:${port}`, { 
+                    method: 'GET',
+                    signal: AbortSignal.timeout(500) // Korte timeout voor elke poging
+                });
+                // Als we een response krijgen (ongeacht de status), is de server up
+                return true;
+            } catch (e) {
+                // Nog niet bereikbaar, even wachten
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
+        return false;
     }
 
     getSitePort(id, siteDir) {
