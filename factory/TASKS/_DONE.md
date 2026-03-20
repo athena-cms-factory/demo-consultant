@@ -6,6 +6,7 @@
 - [x] **Sheet Manager Backend Recovery**: Ontbrekende `getSiteStructure` en `linkSheet` methodes geïmplementeerd in `SiteController.js`.
 - [x] **API Route Alignment**: Route `/api/sites/:id/link-sheet` toegevoegd aan `server.js` voor compatibiliteit met de frontend.
 - [x] **Dynamic Sheet Loading**: `SheetModal.jsx` in de dashboard-ui aangepast om actief de actuele Sheet URL op te halen bij het openen.
+- [x] **Sheet Manager Button Activation**: Fix voor verduisterde (disabled) Push/Pull knoppen door ze te koppelen aan de lokale `sheetUrl` state.
 - [x] **Frontend Service Expansion**: `ApiService.js` uitgebreid met `getSiteStructure` methode.
 - [x] **Production Build Validation**: Volledige herbuild van de Dashboard UI (`pnpm run build`) en herstart via PM2 succesvol uitgevoerd.
 

@@ -108,7 +108,7 @@ export default function SheetModal({ isOpen, site, onClose }) {
           <div className="grid grid-cols-2 gap-4">
             <button 
               onClick={handlePull}
-              disabled={loading || !site.sheetUrl}
+              disabled={loading || !sheetUrl}
               className="flex flex-col items-center gap-3 p-6 bg-emerald-500/5 border border-emerald-500/20 rounded-sm hover:bg-emerald-500/10 hover:border-emerald-500/40 transition-all group disabled:opacity-10 disabled:grayscale"
             >
               <span className="text-2xl group-hover:scale-110 transition-transform">📥</span>
@@ -117,7 +117,7 @@ export default function SheetModal({ isOpen, site, onClose }) {
 
             <button 
               onClick={handlePush}
-              disabled={loading || !site.sheetUrl}
+              disabled={loading || !sheetUrl}
               className="flex flex-col items-center gap-3 p-6 bg-blue-500/5 border border-blue-500/20 rounded-sm hover:bg-blue-500/10 hover:border-blue-500/40 transition-all group disabled:opacity-10 disabled:grayscale"
             >
               <span className="text-2xl group-hover:scale-110 transition-transform">📤</span>
@@ -125,9 +125,9 @@ export default function SheetModal({ isOpen, site, onClose }) {
             </button>
           </div>
 
-          {site.sheetUrl && (
+          {sheetUrl && (
             <button 
-              onClick={() => window.open(site.sheetUrl, '_blank')}
+              onClick={() => window.open(sheetUrl, '_blank')}
               className="w-full py-3 bg-black/40 border border-athena-border text-slate-400 text-[10px] font-black uppercase tracking-widest hover:text-white hover:border-slate-500 transition-all rounded-sm"
             >
               🌐 Open Sheet in browser
