@@ -9,7 +9,11 @@ export default function SiteCard({ site, activeServer, onRefresh, onSEO, onSheet
   const handleStartDev = async () => {
     try {
       addToast(`Starten van server voor ${site.name}...`, 'info');
-      await ApiService.startSiteDev(site.name);
+      if (site.siteType === 'lego-v9') {
+        await ApiService.startLegoSite(site.name);
+      } else {
+        await ApiService.startSiteDev(site.name);
+      }
       setTimeout(onRefresh, 1000);
     } catch (e) {
       addToast("Fout bij starten server: " + e.message, 'error');
@@ -20,7 +24,11 @@ export default function SiteCard({ site, activeServer, onRefresh, onSEO, onSheet
     if (!activeServer) return;
     try {
       addToast(`Stoppen van server op poort ${activeServer.port}...`, 'info');
-      await ApiService.stopSiteServer(activeServer.port);
+      if (site.siteType === 'lego-v9') {
+        await ApiService.stopLegoSite(site.name);
+      } else {
+        await ApiService.stopSiteServer(activeServer.port);
+      }
       setTimeout(onRefresh, 1000);
     } catch (e) {
       addToast("Fout bij stoppen server: " + e.message, 'error');
@@ -64,6 +72,7 @@ export default function SiteCard({ site, activeServer, onRefresh, onSEO, onSheet
           </p>
         </div>
         <div className="flex flex-col gap-1 items-end">
+          {site.siteType === 'lego-v9' && <Badge type="lego" label="LEGO v9" />}
           <Badge type={isRunning ? 'live' : 'local'} label={isRunning ? 'ACTIVE' : 'OFFLINE'} />
         </div>
       </div>
@@ -120,6 +129,7 @@ function Badge({ type, label }) {
   const styles = {
     live: 'text-emerald-500 border-emerald-500/30 bg-emerald-500/5',
     local: 'text-amber-500 border-amber-500/30 bg-amber-500/5',
+    lego: 'text-blue-500 border-blue-500/30 bg-blue-500/5',
     info: 'text-blue-400 border-blue-500/30 bg-blue-500/5',
   };
   return (

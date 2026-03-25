@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { ApiService } from '../services/ApiService'
 
-export default function GeneratorModal({ isOpen, onClose, onRefresh }) {
-  const [step, setStep] = useState(1)
+export default function GeneratorModal({ isOpen, onClose, onRefresh, onSwitchToLego }) {
+  const [step, setStep] = useState(0)
   const [projects, setProjects] = useState([])
   const [siteTypes, setSiteTypes] = useState([])
   
@@ -52,13 +52,44 @@ export default function GeneratorModal({ isOpen, onClose, onRefresh }) {
         <div className="bg-athena-panel p-5 border-b border-athena-border flex justify-between items-center">
            <div>
               <h3 className="text-white font-bold text-lg leading-tight uppercase tracking-tight">AI Site Generator</h3>
-              <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">Stap {step} van 3: {step === 1 ? 'Data Ingestie' : step === 2 ? 'Configuratie' : 'Generatie'}</p>
+               <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1">
+                 {step === 0 ? 'Project Type Kiezen' : `Stap ${step} van 3: ${step === 1 ? 'Data Ingestie' : step === 2 ? 'Configuratie' : 'Generatie'}`}
+               </p>
            </div>
            <button onClick={onClose} className="text-slate-500 hover:text-white text-xl">✕</button>
         </div>
 
         {/* Content */}
         <div className="p-8 flex-1 overflow-y-auto space-y-6">
+           {step === 0 && (
+             <div className="space-y-6 animate-fadeIn py-4 text-center">
+                <h4 className="text-white font-black text-xl mb-8 uppercase tracking-tighter italic">Kies je bouwstijl</h4>
+                <div className="grid grid-cols-2 gap-6">
+                   <button 
+                     onClick={() => setStep(1)}
+                     className="bg-athena-panel border-2 border-athena-border p-8 rounded-sm hover:border-athena-accent transition-all group flex flex-col items-center gap-4"
+                   >
+                     <div className="text-4xl group-hover:scale-110 transition-transform">🤖</div>
+                     <div className="space-y-1">
+                        <p className="font-black text-white text-[11px] uppercase tracking-widest">AI Basis (v8.7)</p>
+                        <p className="text-[10px] text-slate-500">Best for data-heavy, single-page sites with Sheet sync.</p>
+                     </div>
+                   </button>
+                   <button 
+                     onClick={() => { onClose(); onSwitchToLego(); }}
+                     className="bg-athena-panel border-2 border-athena-border p-8 rounded-sm hover:border-blue-500 transition-all group flex flex-col items-center gap-4"
+                   >
+                     <div className="text-4xl group-hover:scale-110 transition-transform">🧱</div>
+                     <div className="space-y-1">
+                        <p className="font-black text-white text-[11px] uppercase tracking-widest">Modular Lego (v9.0)</p>
+                        <p className="text-[10px] text-slate-500">Best for section-based, modern Vite applications.</p>
+                     </div>
+                   </button>
+                </div>
+                <p className="text-slate-600 text-xs mt-8">Niet zeker? De SOP op het dashboard legt beide methodes gedetailleerd uit.</p>
+             </div>
+           )}
+
            {step === 1 && (
              <div className="space-y-4 animate-fadeIn">
                 <label className="block text-[10px] font-black text-athena-accent uppercase tracking-widest">Selecteer Data Bron (Input Folder)</label>

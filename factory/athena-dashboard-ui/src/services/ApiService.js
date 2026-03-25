@@ -108,6 +108,27 @@ export const ApiService = {
   prunePnpmStore: () => fetch(`${API_BASE}/storage/prune-pnpm`, { method: 'POST' }).then(res => res.json()),
   cleanupTempData: () => fetch(`${API_BASE}/storage/cleanup-temp`, { method: 'POST' }).then(res => res.json()),
 
+  // Lego v9 Factory
+  getLegoLibrary: () => fetch(`${API_BASE}/lego/library`).then(res => res.json()),
+  getLegoSitetypes: () => fetch(`${API_BASE}/lego/sitetypes`).then(res => res.json()),
+  saveLegoBlock: (block) => fetch(`${API_BASE}/lego/blocks`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(block)
+  }).then(res => res.json()),
+  getLegoBlock: (category, id) => fetch(`${API_BASE}/lego/blocks/${category}/${id}`).then(res => res.json()),
+  deleteLegoBlock: (category, id) => fetch(`${API_BASE}/lego/blocks/${category}/${id}`, { method: 'DELETE' }).then(res => res.json()),
+  generateLegoSite: (name, blocks) => fetch(`${API_BASE}/lego/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, blocks })
+  }).then(res => res.json()),
+  
+  // Lego Project Control (Unified)
+  startLegoSite: (name) => fetch(`${API_BASE}/projects/${name}/start`, { method: 'POST' }).then(res => res.json()),
+  stopLegoSite: (name) => fetch(`${API_BASE}/projects/${name}/stop`, { method: 'POST' }).then(res => res.json()),
+  hydrateLegoSite: (name) => fetch(`${API_BASE}/projects/${name}/hydrate`, { method: 'POST' }).then(res => res.json()),
+
   // Settings
   updateConfig: (config) => fetch(`${API_BASE}/settings`, {
     method: 'POST',

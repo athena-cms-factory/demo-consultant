@@ -18,8 +18,8 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-      // Proxy voor alle site-previews en hun assets
-      '^/(previews|academy|bakkerij|de-stijlvolle-kapper|gentse-dakwerken|kdc-it-advies|lex-justitia|pure-bloom|urban-brew|athena-hub|ai-consultant|chocolade-shop|cloud-architects|code-crafters|de-schaar|demo-bakkerij|demo-consultant|demo-portfolio|fpc-gent|jets-archive|karel-portfolio|karel-webdesign|nieuwe-tanden|portfolio-kbm|pure-relaxation|test-dentist|test-kapper|test-medical|test-portfolio|test-real-estate|test-restaurant|test-store|urban-oasis|urban-sneakers|urban-soles)': {
+      // Proxy voor alle site-previews en hun assets (Dynamisch)
+      '^/(previews|sites-dev|sites-static|bakkerij|academy|urban|test-|demo-)': {
         target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,

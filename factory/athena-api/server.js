@@ -4,8 +4,15 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
 import cors from 'cors';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Ensure .env is loaded from the factory root (one level up from athena-api)
+dotenv.config({ path: path.join(__dirname, '../.env') });
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import { exec, spawn } from 'child_process';
 
 // Managers & Libs
 import { AthenaConfigManager } from '../5-engine/lib/ConfigManager.js';
@@ -25,6 +32,11 @@ import { ToolController } from '../5-engine/controllers/ToolController.js';
 import { ServerController } from '../5-engine/controllers/ServerController.js';
 import { GithubController } from '../5-engine/controllers/GithubController.js';
 
+// 🧱 Lego v9.0 Integration
+import { LegoLibrary } from '../9-engine/lib/LegoRegistry.js';
+import { ProjectGenerator } from '../9-engine/core/ProjectGenerator.js';
+const activeSitesLego = {}; 
+
 
 import {
     generateDataStructureAPI,
@@ -35,8 +47,6 @@ import {
 } from './sitetype-api.js';
 import { generateWithAI } from '../5-engine/core/ai-engine.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '../..');
 const externalDir = path.join(root, 'sites-external');
 console.log(`📂 Resolved Root: ${root}`);
@@ -85,6 +95,11 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage });
+
+// --- LEGO v9.0 ASSETS ---
+const assetsDir = path.join(__dirname, '../9-library/assets/images');
+if (!fs.existsSync(assetsDir)) fs.mkdirSync(assetsDir, { recursive: true });
+app.use('/api/assets', express.static(assetsDir));
 
 // --- MIDDLEWARE ---
 app.use(express.json());
@@ -297,6 +312,155 @@ app.post('/api/marketing/generate-blog', async (req, res) => res.json(await mark
 
 // --- PAYMENT API ---
 app.post('/api/payments/create-session', async (req, res) => res.json(await paymentCtrl.createStripeSession(req.body.projectName, req.body.cart, req.body.successUrl, req.body.cancelUrl)));
+
+// ==========================================
+// 🧱 LEGO v9.0 API ROUTES
+// ==========================================
+
+const killPort = (port) => new Promise(resolve => exec(`fuser -k ${port}/tcp`, () => resolve()));
+const getPortManagerPort = (siteName) => {
+    return new Promise((resolve) => {
+        exec(`python3 /home/kareltestspecial/INFRA/port-manager/scripts/manage_ports.py get "lego-${siteName}" "LegoFactory"`, (err, stdout) => {
+            const match = stdout ? stdout.match(/PORT=(\d+)/) : null;
+            resolve(match ? parseInt(match[1]) : (Math.floor(Math.random() * 800) + 6100));
+        });
+    });
+};
+
+const updateRegistry = (library) => {
+    const registryPath = path.join(__dirname, '../9-engine/lib/LegoRegistry.js');
+    const content = `/**
+ * 🧱 Lego Registry (v9.0)
+ */
+export const LegoLibrary = ${JSON.stringify(library, null, 4)};
+`;
+    fs.writeFileSync(registryPath, content, 'utf8');
+};
+
+app.post('/api/lego/blocks', (req, res) => {
+    const { category, id, name, code } = req.body;
+    const blockPath = path.join(__dirname, `../9-library/${category}/${id}.jsx`);
+    fs.writeFileSync(blockPath, code, 'utf8');
+    const registry = JSON.parse(JSON.stringify(LegoLibrary));
+    const existing = registry[category].find(b => b.id === id);
+    if (existing) { existing.name = name; } 
+    else { registry[category].push({ id, name, path: `${category}/${id}.jsx` }); }
+    updateRegistry(registry);
+    res.json({ success: true, message: `Block ${id} created/updated.` });
+});
+
+app.get('/api/lego/blocks/:category/:id', (req, res) => {
+    const { category, id } = req.params;
+    const categoryDir = path.join(__dirname, `../9-library/${category}`);
+    if (!fs.existsSync(categoryDir)) return res.status(404).json({ error: 'Category not found' });
+    let filePath = null;
+    const regEntry = (LegoLibrary[category] || []).find(b => b.id === id);
+    if (regEntry) {
+        const registeredPath = path.join(__dirname, `../9-library/${regEntry.path}`);
+        if (fs.existsSync(registeredPath)) filePath = registeredPath;
+    }
+    if (!filePath) {
+        const files = fs.readdirSync(categoryDir);
+        const match = files.find(f => f.toLowerCase() === `${id}.jsx` || f.toLowerCase() === `${id.toLowerCase()}.jsx`);
+        if (match) filePath = path.join(categoryDir, match);
+    }
+    if (!filePath) return res.status(404).json({ error: 'Not found', id });
+    const code = fs.readFileSync(filePath, 'utf8');
+    res.json({ id, category, file: path.basename(filePath), code });
+});
+
+app.delete('/api/lego/blocks/:category/:id', (req, res) => {
+    const { category, id } = req.params;
+    const blockPath = path.join(__dirname, `../9-library/${category}/${id}.jsx`);
+    if (fs.existsSync(blockPath)) fs.unlinkSync(blockPath);
+    const registry = JSON.parse(JSON.stringify(LegoLibrary));
+    registry[category] = registry[category].filter(b => b.id !== id);
+    updateRegistry(registry);
+    res.json({ success: true, message: `Block ${id} deleted.` });
+});
+
+app.get('/api/lego/library', (req, res) => res.json(LegoLibrary));
+
+app.get('/api/lego/sitetypes', (req, res) => {
+    const siteTypesDir = path.join(__dirname, '../9-library/sitetypes');
+    if (!fs.existsSync(siteTypesDir)) return res.json([]);
+    const files = fs.readdirSync(siteTypesDir).filter(f => f.endsWith('.json'));
+    const types = files.map(file => JSON.parse(fs.readFileSync(path.join(siteTypesDir, file), 'utf8')));
+    res.json(types);
+});
+
+app.get('/api/images', (req, res) => {
+    if (!fs.existsSync(assetsDir)) return res.json([]);
+    const files = fs.readdirSync(assetsDir).filter(f => !f.startsWith('.'));
+    const images = files.map(file => ({
+        name: file,
+        url: `/api/assets/${file}`,
+        size: fs.statSync(path.join(assetsDir, file)).size
+    }));
+    res.json(images);
+});
+
+app.post('/api/lego/generate', async (req, res) => {
+    const { name } = req.body;
+    const siteName = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+    const sitesDir = path.join(root, 'sites');
+    const siteDir = path.join(sitesDir, siteName);
+
+    if (fs.existsSync(siteDir)) return res.status(409).json({ error: `Site "${siteName}" bestaat al.` });
+
+    try {
+        const generator = new ProjectGenerator({
+            projectName: siteName,
+            spreadsheetId: process.env.MASTER_TEMPLATE_ID // Initial default
+        });
+
+        await generator.run();
+
+        // Create athena-config.json for deep integration
+        const athenaConfig = {
+            projectName: siteName,
+            siteType: 'lego-v9',
+            siteModel: 'Vite-Modular',
+            generatedAt: new Date().toISOString(),
+            isNative: true
+        };
+        fs.writeFileSync(path.join(siteDir, 'athena-config.json'), JSON.stringify(athenaConfig, null, 2));
+
+        res.json({ success: true, siteName, message: `Site "${siteName}" (v9.1 Modern) succesvol gegenereerd!` });
+    } catch (e) {
+        console.error("Lego Generation Error:", e);
+        res.status(500).json({ error: "Generatie mislukt: " + e.message });
+    }
+});
+
+app.post('/api/projects/:name/hydrate', (req, res) => {
+    const { name } = req.params;
+    const siteDir = path.join(root, 'sites', name);
+    if (!fs.existsSync(siteDir)) return res.status(404).json({ error: 'Site not found' });
+    spawn('pnpm', ['install'], { cwd: siteDir, shell: true });
+    res.json({ success: true, message: 'Installatie gestart' });
+});
+
+app.post('/api/projects/:name/start', async (req, res) => {
+    const { name } = req.params;
+    const siteDir = path.join(root, 'sites', name);
+    const p = await getPortManagerPort(name);
+    
+    // Check if already running
+    const active = pm.listActive();
+    if (active[p]) return res.json({ success: true, port: p, message: 'Reeds actief' });
+
+    pm.startProcess(name, 'lego-dev', p, 'pnpm', ['run', 'dev', '--port', p], { cwd: siteDir, shell: true });
+    res.json({ success: true, port: p, message: `Gestart op poort ${p}` });
+});
+
+app.post('/api/projects/:name/stop', async (req, res) => {
+    const { name } = req.params;
+    const p = await getPortManagerPort(name);
+    const stopped = await pm.stopProcessByPort(p);
+    res.json({ success: true, stopped, message: stopped ? 'Gestopt' : 'Kon poort niet vrijgeven (reeds gestopt?)' });
+});
 
 // --- ROADMAP & TODO API ---
 app.get('/api/roadmaps', (req, res) => {

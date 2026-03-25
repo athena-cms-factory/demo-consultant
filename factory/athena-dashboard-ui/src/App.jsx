@@ -15,11 +15,16 @@ import ToolsView from './views/ToolsView'
 import GeneratorModal from './components/GeneratorModal'
 import MarketingModal from './components/MarketingModal'
 import BlogModal from './components/BlogModal'
+import LegoStudio from './views/LegoStudio'
+import BlockManager from './views/BlockManager'
+import ImagesView from './views/ImagesView'
+import SourceDataView from './views/SourceData'
+import HomeView from './views/HomeView'
 import './index.css'
 
 function App() {
   const { addToast } = useToast()
-  const [currentView, setCurrentView] = useState('sites')
+  const [currentView, setCurrentView] = useState('home')
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false)
   const [isMarketingOpen, setIsMarketingOpen] = useState(false)
   const [selectedMarketingSite, setSelectedMarketingSite] = useState(null)
@@ -33,6 +38,7 @@ function App() {
   const [activeServers, setActiveServers] = useState([])
   const [systemStatus, setSystemStatus] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     refreshData()
@@ -90,6 +96,7 @@ function App() {
         </div>
         
         <nav className="flex-1 p-1.5 space-y-0.5 overflow-y-auto mt-2 custom-scrollbar">
+          <NavBtn id="home" label="Dashboard" icon="🏠" active={currentView === 'home'} onClick={() => setCurrentView('home')} />
           <NavBtn id="sites" label="Sites" icon="🌐" active={currentView === 'sites'} onClick={() => setCurrentView('sites')} />
           <NavBtn id="projects" label="Data Hub" icon="📁" active={currentView === 'projects'} onClick={() => setCurrentView('projects')} />
           <NavBtn id="sitetypes" label="SiteTypes" icon="🧩" active={currentView === 'sitetypes'} onClick={() => setCurrentView('sitetypes')} />
@@ -99,6 +106,13 @@ function App() {
           <NavBtn id="repositories" label="GitHub" icon="🐙" active={currentView === 'repositories'} onClick={() => setCurrentView('repositories')} />
           <NavBtn id="servers" label="Servers" icon="🖥️" active={currentView === 'servers'} onClick={() => setCurrentView('servers')} />
           
+          <div className="h-px bg-athena-border my-2 mx-2 opacity-50"></div>
+          
+          <NavBtn id="lego-studio" label="Lego Studio" icon="🧱" active={currentView === 'lego-studio'} onClick={() => setCurrentView('lego-studio')} />
+          <NavBtn id="block-manager" label="Library" icon="🧩" active={currentView === 'block-manager'} onClick={() => setCurrentView('block-manager')} />
+          <NavBtn id="images" label="Images" icon="🖼️" active={currentView === 'images'} onClick={() => setCurrentView('images')} />
+          <NavBtn id="source-data" label="Source Data" icon="📊" active={currentView === 'source-data'} onClick={() => setCurrentView('source-data')} />
+
           <div className="h-px bg-athena-border my-2 mx-2 opacity-50"></div>
           
           <NavBtn id="storage" label="Opslag" icon="💾" active={currentView === 'storage'} onClick={() => setCurrentView('storage')} />
@@ -147,8 +161,24 @@ function App() {
 
         <main className="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar">
           <div className="max-w-[1400px] mx-auto">
+            {currentView === 'home' && <HomeView />}
             {currentView === 'sites' && (
                <div className="space-y-6">
+                  {/* Search bar */}
+                  <div className="bg-athena-panel border border-athena-border p-2 rounded-lg flex items-center gap-3">
+                    <span className="text-slate-500 pl-2">🔍</span>
+                    <input 
+                      type="text" 
+                      placeholder="Zoek in projecten..." 
+                      className="bg-transparent border-none outline-none text-[13px] font-medium text-white w-full py-1"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    {searchTerm && (
+                      <button onClick={() => setSearchTerm('')} className="text-slate-500 pr-2 hover:text-white">✕</button>
+                    )}
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
                      <StatBox label="Geregistreerde Sites" value={sites.length} />
                      <StatBox label="Online (Dev)" value={activeServers.filter(s => !s.isSystem && s.siteName !== 'athena-api' && s.siteName !== 'athena-ui').length} color="text-emerald-500" />
@@ -162,7 +192,7 @@ function App() {
                       Native Athena Projects
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                      {sites.filter(s => s.isNative && !s.name.startsWith('test-')).map((site, idx) => (
+                      {sites.filter(s => s.isNative && !s.name.startsWith('test-') && s.name.toLowerCase().includes(searchTerm.toLowerCase())).map((site, idx) => (
                         <SiteCard 
                           key={`native-${idx}`} 
                           site={site} 
@@ -187,7 +217,7 @@ function App() {
                             Legacy Apps (Vite)
                           </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                            {sites.filter(s => !s.isNative && s.siteType !== 'static-legacy' && (s.isInstalled || s.name.includes('academy') || s.name.includes('bakkerij'))).map((site, idx) => (
+                            {sites.filter(s => !s.isNative && s.siteType !== 'static-legacy' && (s.isInstalled || s.name.includes('academy') || s.name.includes('bakkerij')) && s.name.toLowerCase().includes(searchTerm.toLowerCase())).map((site, idx) => (
                               <LegacySiteCard 
                                 key={`app-${idx}`} 
                                 site={site} 
@@ -207,7 +237,7 @@ function App() {
                             Static Legacy Sites
                           </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                            {sites.filter(s => !s.isNative && s.siteType === 'static-legacy').map((site, idx) => (
+                            {sites.filter(s => !s.isNative && s.siteType === 'static-legacy' && s.name.toLowerCase().includes(searchTerm.toLowerCase())).map((site, idx) => (
                               <LegacySiteCard 
                                 key={`static-${idx}`} 
                                 site={site} 
@@ -227,7 +257,7 @@ function App() {
                             Data & Archive (Incomplete / Tests)
                           </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 opacity-60 grayscale">
-                            {sites.filter(s => (!s.isNative && !s.isInstalled && s.siteType !== 'static-legacy' && !s.name.includes('academy') && !s.name.includes('bakkerij')) || (s.isNative && s.name.startsWith('test-'))).map((site, idx) => (
+                            {sites.filter(s => ((!s.isNative && !s.isInstalled && s.siteType !== 'static-legacy' && !s.name.includes('academy') && !s.name.includes('bakkerij')) || (s.isNative && s.name.startsWith('test-'))) && s.name.toLowerCase().includes(searchTerm.toLowerCase())).map((site, idx) => (
                               <LegacySiteCard 
                                 key={`archive-${idx}`} 
                                 site={site} 
@@ -251,11 +281,21 @@ function App() {
             {currentView === 'sitetypes' && <SiteTypesView />}
             {currentView === 'todo' && <TodoView />}
             {currentView === 'settings' && <SettingsView />}
+            
+            {currentView === 'lego-studio' && <LegoStudio />}
+            {currentView === 'block-manager' && <BlockManager />}
+            {currentView === 'images' && <ImagesView />}
+            {currentView === 'source-data' && <SourceDataView />}
           </div>
         </main>
       </div>
 
-      <GeneratorModal isOpen={isGeneratorOpen} onClose={() => setIsGeneratorOpen(false)} onRefresh={refreshData} />
+      <GeneratorModal 
+        isOpen={isGeneratorOpen} 
+        onClose={() => setIsGeneratorOpen(false)} 
+        onRefresh={refreshData} 
+        onSwitchToLego={() => setCurrentView('lego-studio')}
+      />
       <MarketingModal isOpen={isMarketingOpen} siteName={selectedMarketingSite} onClose={() => setIsMarketingOpen(false)} />
       <BlogModal isOpen={isBlogOpen} siteName={selectedBlogSite} onClose={() => setIsBlogOpen(false)} />
       <SheetModal isOpen={isSheetOpen} site={selectedSheetSite} onClose={() => { setIsSheetOpen(false); refreshData(); }} />
