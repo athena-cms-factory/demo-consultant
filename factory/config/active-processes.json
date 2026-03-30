@@ -1,16 +1,16 @@
 {
-  "5002": {
-    "pid": 7623,
-    "id": "athena-dock",
-    "type": "dock",
-    "startTime": "2026-03-30T18:32:23.492Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/athena-dock-dock.log"
+  "5004": {
+    "pid": 5678,
+    "id": "media-mapper",
+    "type": "editor",
+    "startTime": "2026-03-30T21:13:00.993Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/media-mapper-editor.log"
   },
-  "6103": {
-    "pid": 25840,
-    "id": "fpc-gent-site",
+  "6225": {
+    "pid": 24192,
+    "id": "jets-archive",
     "type": "preview",
-    "startTime": "2026-03-30T19:28:54.715Z",
-    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/fpc-gent-site-preview.log"
+    "startTime": "2026-03-30T22:37:52.720Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/jets-archive-preview.log"
   }
 }

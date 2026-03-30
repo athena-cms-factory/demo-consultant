@@ -1,4 +1,5 @@
 import React from 'react';
+import { getImageUrl } from '../utils/paths';
 
 const Testimonials = ({ data, sectionName }) => {
     if (!data || data.length === 0) return null;
@@ -26,7 +27,7 @@ const Testimonials = ({ data, sectionName }) => {
                                 <div className="mt-auto flex items-center gap-4 border-t border-slate-100 pt-6">
                                     {imgKey && item[imgKey] && (
                                         <div className="w-12 h-12 rounded-full overflow-hidden shadow-sm flex-shrink-0">
-                                            <img src={item[imgKey]} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
+                                            <img src={getImageUrl(item[imgKey])} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
                                         </div>
                                     )}
                                     <div>

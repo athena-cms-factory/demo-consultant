@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDisplayConfig } from './DisplayConfigContext';
+import { getImageUrl } from '../utils/paths';
 
 /**
  * EditableMedia (Docked Track)
@@ -14,14 +15,7 @@ export default function EditableMedia({ src, alt, className, cmsBind, ...props }
     return null;
   }
 
-  let finalPath = src;
-  if (src && !src.startsWith('http') && !src.startsWith('/') && !src.startsWith('data:')) {
-    const cleanSrc = src.replace('./', '');
-    const baseUrl = import.meta.env.BASE_URL === './' ? '' : import.meta.env.BASE_URL;
-    // Always use images/ prefix for local relative paths
-    finalPath = `${baseUrl}images/${cleanSrc}`.replace(/\/+/g, '/');
-  }
-  const finalSrc = finalPath;
+  const finalSrc = getImageUrl(src);
 
   const isVideo = src && (src.endsWith('.mp4') || src.endsWith('.webm'));
 

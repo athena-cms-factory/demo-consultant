@@ -25,6 +25,7 @@ export default function ToolsView() {
       tools: [
         { id: 'storage-audit-deep', label: "Deep Storage Audit", desc: "Grondige schijfruimte analyse per site.", icon: "💾" },
         { id: 'rebuild-registry', label: "Rebuild Registry", desc: "Herstel de centrale sites.json database.", icon: "🛠️" },
+        { id: 'cleanup-factory', label: "Deep Factory Cleanup", desc: "Verwijder tijdelijke bestanden, stop dode processen en herstel poort-registraties.", icon: "🧹" },
       ]
     }
   ]

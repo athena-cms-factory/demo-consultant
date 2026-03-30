@@ -1,6 +1,6 @@
 const CACHE_NAME = 'athena-cache-v' + Date.now(); // Unieke naam per build
 const urlsToCache = [
-  './athena-icon.svg',
+  './images/athena-icon.svg',
   './manifest.json'
 ];
 

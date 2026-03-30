@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getImageUrl } from '../utils/paths';
 
 const JetCard = ({ jet, index }) => {
   const [imageError, setImageError] = useState(false);
@@ -7,7 +8,7 @@ const JetCard = ({ jet, index }) => {
     <article className={`jet-card ${jet.origin?.toLowerCase() || ''} flex flex-col bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1`}>
       <div className="relative aspect-video overflow-hidden">
         {!imageError ? (
-          <img src={jet.image_url} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" data-dock-type="media" data-dock-bind="jets.0.image_url" />
+          <img src={getImageUrl(jet.image_url)} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" data-dock-type="media" data-dock-bind="jets.0.image_url" />
         ) : (
           <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-400 font-bold text-2xl">
             {jet.name?.substring(0, 2).toUpperCase()}

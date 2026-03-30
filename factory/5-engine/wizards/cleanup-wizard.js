@@ -20,7 +20,10 @@ async function initCLI() {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const ROOT_DIR = path.resolve(__dirname, '..');
+// De wizard staat in athena/factory/5-engine/wizards/
+const ATHENA_ROOT = path.resolve(__dirname, '../../..');
+const FACTORY_ROOT = path.resolve(__dirname, '../..');
+const ROOT_DIR = ATHENA_ROOT; 
 
 /**
  * Verwijdert een lokaal project (site en/of data).
@@ -30,8 +33,8 @@ const ROOT_DIR = path.resolve(__dirname, '..');
  * @returns {object} Resultaat log.
  */
 export function deleteLocalProject(projectId, deleteSite = true, deleteData = true) {
-    const sitesDir = path.resolve(ROOT_DIR, '../sites');
-    const dataDir = path.join(ROOT_DIR, '../input');
+    const sitesDir = path.resolve(ROOT_DIR, 'sites');
+    const dataDir = path.resolve(ROOT_DIR, 'input');
     const logs = [];
 
     const pSites = path.join(sitesDir, projectId);
@@ -72,17 +75,23 @@ export function deleteLocalProject(projectId, deleteSite = true, deleteData = tr
  * @returns {object} Resultaat log.
  */
 export async function deleteRemoteRepo(projectId) {
-    await loadEnv(path.join(ROOT_DIR, '.env'));
+    await loadEnv(path.join(FACTORY_ROOT, '.env'));
     const { GITHUB_USER, GITHUB_ORG, GITHUB_PAT } = process.env;
 
     if (!GITHUB_USER && !GITHUB_ORG) throw new Error("GITHUB_USER of GITHUB_ORG niet in .env");
 
     const targets = [];
-    if (GITHUB_ORG) {
-        targets.push(`${GITHUB_ORG}/${projectId}`);
-    }
-    if (GITHUB_USER) {
-        targets.push(`${GITHUB_USER}/${projectId}`);
+    
+    // Als projectId al een '/' bevat, is het waarschijnlijk een volledige naam 'user/repo'
+    if (projectId.includes('/')) {
+        targets.push(projectId);
+    } else {
+        if (GITHUB_ORG) {
+            targets.push(`${GITHUB_ORG}/${projectId}`);
+        }
+        if (GITHUB_USER) {
+            targets.push(`${GITHUB_USER}/${projectId}`);
+        }
     }
 
     // Unieke targets
@@ -98,6 +107,7 @@ export async function deleteRemoteRepo(projectId) {
                 env: { ...process.env, GH_TOKEN: GITHUB_PAT }
             });
             deletedCount++;
+            break; // Stop na de eerste geslaagde deletie als we een lijst probeerden
         } catch (e) {
             // Repo bestaat waarschijnlijk niet onder deze specifieke naam/owner combinatie
             errors.push(`${target}: ${e.message}`);

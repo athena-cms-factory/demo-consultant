@@ -157,7 +157,7 @@ export class ProjectController {
     /**
      * Delete project parts (local data, local site, remote repo)
      */
-    async deleteProject(id, { deleteSite, deleteData, deleteRemote }) {
+    async deleteProject(id, { deleteSite, deleteData, deleteRemote, remoteRepoName }) {
         let logs = [];
         if (deleteSite || deleteData) {
             const result = deleteLocalProject(id, deleteSite, deleteData);
@@ -165,7 +165,9 @@ export class ProjectController {
         }
         if (deleteRemote) {
             try {
-                const remoteResult = await deleteRemoteRepo(id);
+                // Gebruik remoteRepoName als deze er is, anders de projectId (id)
+                const target = remoteRepoName || id; 
+                const remoteResult = await deleteRemoteRepo(target);
                 logs.push(`✅ ${remoteResult.message}`);
             } catch (e) {
                 logs.push(`ℹ️ Geen remote repo verwijderd: ${e.message}`);

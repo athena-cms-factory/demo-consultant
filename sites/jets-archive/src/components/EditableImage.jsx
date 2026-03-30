@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getImageUrl } from '../utils/paths';
 
 /**
  * EditableImage (Legacy Alias for EditableMedia)
@@ -74,9 +75,7 @@ export default function EditableImage({ src, alt, className, cmsBind, ...props }
     }
   };
 
-  const finalSrc = (src && !src.startsWith('http') && !src.startsWith('/') && !src.startsWith('data:'))
-    ? `${import.meta.env.BASE_URL}${src.startsWith('images/') ? '' : 'images/'}${src}`.replace(/\/+/g, '/')
-    : src;
+  const finalSrc = getImageUrl(src);
 
   if (!isDev) {
     return <img src={finalSrc} alt={alt} className={className} {...props} />;

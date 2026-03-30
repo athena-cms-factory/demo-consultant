@@ -1,4 +1,5 @@
 import React from 'react';
+import { getImageUrl } from '../utils/paths';
 
 const Team = ({ data, sectionName }) => {
     if (!data || data.length === 0) return null;
@@ -20,7 +21,7 @@ const Team = ({ data, sectionName }) => {
                         return (
                             <div key={index} className="flex flex-col items-center text-center group">
                                 <div className="w-48 h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-2xl group-hover:scale-105 transition-transform duration-300 ring-4 ring-transparent hover:ring-accent/30 relative">
-                                    <img src={item[imgKey]} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
+                                    <img src={getImageUrl(item[imgKey])} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
                                 </div>
                                 <h3 className="text-xl font-bold text-primary mb-1">
                                     <span data-dock-type="text" data-dock-bind={`sectionName.0.naamKey`}>{item[naamKey]}</span>

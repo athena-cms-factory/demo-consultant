@@ -1,4 +1,5 @@
 import React from 'react';
+import { getImageUrl } from '../utils/paths';
 
 const Hero = ({ data, sectionName, features = {}, style = {} }) => {
     const hero = data[0];
@@ -19,7 +20,7 @@ const Hero = ({ data, sectionName, features = {}, style = {} }) => {
             style={style}
         >
             <div className="absolute inset-0 z-0">
-                <img src={hero.hero_afbeelding || hero.foto_url} className="w-full h-full object-cover object-top" data-dock-type="media" data-dock-bind={`sectionName.0.hero.hero_afbeelding`} />
+                <img src={getImageUrl(hero.hero_afbeelding || hero.foto_url)} className="w-full h-full object-cover object-top" data-dock-type="media" data-dock-bind={`sectionName.0.hero.hero_afbeelding`} />
                 <div className="absolute inset-0 z-20 pointer-events-none" style={{
                     backgroundImage: 'linear-gradient(to bottom, var(--hero-overlay-start, rgba(0,0,0,0.6)), var(--hero-overlay-end, rgba(0,0,0,0.6)))'
                 }}></div>

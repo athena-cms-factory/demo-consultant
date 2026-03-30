@@ -18,6 +18,12 @@ export const ApiService = {
     body: JSON.stringify({ projectName })
   }).then(res => res.json()),
 
+  deleteProject: (id, options = { deleteSite: true, deleteData: true, deleteRemote: false }) => fetch(`${API_BASE}/projects/${id}/delete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(options)
+  }).then(res => res.json()),
+
   // Sites
   getSites: () => fetch(`${API_BASE}/sites`).then(res => res.json()),
   getSiteStructure: (id) => fetch(`${API_BASE}/sites/${id}/structure`).then(res => res.json()),

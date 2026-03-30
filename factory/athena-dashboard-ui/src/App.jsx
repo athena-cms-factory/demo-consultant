@@ -24,7 +24,7 @@ import './index.css'
 
 function App() {
   const { addToast } = useToast()
-  const [currentView, setCurrentView] = useState('home')
+  const [currentView, setCurrentView] = useState('sites')
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false)
   const [isMarketingOpen, setIsMarketingOpen] = useState(false)
   const [selectedMarketingSite, setSelectedMarketingSite] = useState(null)

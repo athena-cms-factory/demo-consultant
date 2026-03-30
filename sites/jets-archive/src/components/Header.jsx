@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getImageUrl } from '../utils/paths';
 
 function Header({ siteSettings = {} }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,7 +39,7 @@ function Header({ siteSettings = {} }) {
 
             {settings.header_show_logo !== false && (
               <div className="relative w-12 h-12 overflow-hidden transition-transform duration-500">
-                <img src={displayLogo} className="w-full h-full object-contain" data-dock-type="media" data-dock-bind="site_settings.0.site_logo_image" />
+                <img src={getImageUrl(displayLogo)} className="w-full h-full object-contain" data-dock-type="media" data-dock-bind="site_settings.0.site_logo_image" />
               </div>
             )}
 

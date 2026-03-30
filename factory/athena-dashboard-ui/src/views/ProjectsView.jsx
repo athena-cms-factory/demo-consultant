@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { ApiService } from '../services/ApiService'
+import { useToast } from '../services/ToastContext'
 
 export default function ProjectsView() {
+  const { addToast } = useToast()
   const [projects, setProjects] = useState([])
   const [sites, setSites] = useState([])
   const [loading, setLoading] = useState(true)
@@ -21,6 +23,65 @@ export default function ProjectsView() {
       setSites(siteData)
     } catch (e) { console.error("Projects fetch failed") }
     setLoading(false)
+  }
+
+  const handleDelete = async (projectId) => {
+    // 1. Basisbevestiging
+    const confirmLocal = window.confirm(`⚠️ WEET JE HET ZEKER?\n\nWil je project '${projectId}' (input data) volledig verwijderen uit Athena?`);
+    if (!confirmLocal) return;
+
+    // 2. GitHub Check & Detectie
+    let deleteRemote = false;
+    let remoteRepoTarget = "";
+    let displayUrl = "";
+    
+    const site = sites.find(s => s.name === projectId || s.name === `${projectId}-site`);
+    if (site && site.deployData?.repoUrl) {
+      displayUrl = site.deployData.repoUrl;
+      remoteRepoTarget = displayUrl;
+    } else {
+      // Fallback naar de projectId
+      remoteRepoTarget = projectId;
+      displayUrl = `(Geen URL gevonden, probeer: ${projectId})`;
+    }
+
+    const confirmRemote = window.confirm(`🌐 Wil je ook de repository op GitHub verwijderen?\n\nGevonden URL: ${displayUrl}\n\n(Dit kan niet ongedaan worden gemaakt)`);
+    
+    if (confirmRemote) {
+      const editedRepo = window.prompt(`Bevestig de volledige URL of owner/repo van de GitHub repo:`, remoteRepoTarget);
+      if (editedRepo !== null) {
+        deleteRemote = true;
+        remoteRepoTarget = editedRepo;
+      }
+    }
+
+    // Voor deze specifieke workflow (monorepo) vraagt de gebruiker om de map in sites/ eventueel te laten staan,
+    // maar onze standaard deleteProject verwijst naar zowel site als data. 
+    // We laten de gebruiker nu kiezen via een simpele confirm voor de sitemap.
+    const deleteSite = window.confirm(`📂 Wil je ook de lokale sitemap in athena/sites/${projectId} verwijderen?`);
+
+    addToast(`Project ${projectId} aan het verwijderen...`, 'info');
+    try {
+      const res = await ApiService.deleteProject(projectId, { 
+        deleteSite, 
+        deleteData: true, 
+        deleteRemote,
+        remoteRepoName: remoteRepoTarget
+      });
+      
+      if (res.success) {
+        addToast(`✅ ${projectId} succesvol verwijderd.`, 'success');
+        if (deleteRemote) {
+           const logMsg = res.logs.find(l => l.includes('remote repository')) || 'GitHub repo verwijderd (indien gevonden)';
+           addToast(logMsg, 'info');
+        }
+        refresh();
+      } else {
+        addToast(`❌ Fout bij verwijderen: ${res.error}`, 'error');
+      }
+    } catch (e) {
+      addToast("Fout bij verbinden met de API.", "error");
+    }
   }
 
   return (
@@ -49,7 +110,14 @@ export default function ProjectsView() {
                     <button className="flex-1 bg-[#21262d] border border-athena-border text-slate-400 text-[9px] font-black uppercase py-1.5 rounded hover:text-white transition-colors">
                        CREATE
                     </button>
-                    <button className="px-2 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded hover:bg-rose-500 hover:text-white transition-all text-[10px]">🗑️</button>
+                     <button 
+                        onClick={() => handleDelete(project)}
+                        className="px-2 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded hover:bg-rose-500 hover:text-white transition-all text-[10px]"
+                        title="Verwijder project en site"
+                      >
+                        🗑️
+                      </button>
+
                  </div>
               </div>
 

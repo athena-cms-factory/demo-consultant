@@ -1,4 +1,5 @@
 import React from 'react';
+import { getImageUrl } from '../utils/paths';
 
 const AboutSection = ({ data }) => {
   if (!data || data.length === 0) return null;
@@ -9,7 +10,7 @@ const AboutSection = ({ data }) => {
   
   let imgSrc = null;
   if (imageField && info[imageField]) {
-    imgSrc = info[imageField].startsWith('http') ? info[imageField] : `${import.meta.env.BASE_URL}images/${info[imageField]}`;
+    imgSrc = getImageUrl(info[imageField]);
   }
 
   if (!missie) return null;

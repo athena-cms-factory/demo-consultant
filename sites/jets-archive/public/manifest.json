@@ -3,7 +3,7 @@
   "name": "jets-archive",
   "icons": [
     {
-      "src": "athena-icon.svg",
+      "src": "images/athena-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }

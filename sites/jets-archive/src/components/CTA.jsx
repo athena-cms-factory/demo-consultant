@@ -1,4 +1,5 @@
 import React from 'react';
+import { getImageUrl } from '../utils/paths';
 
 const CTA = ({ data, sectionName }) => {
     if (!data || data.length === 0) return null;
@@ -13,7 +14,7 @@ const CTA = ({ data, sectionName }) => {
         <section id={sectionName} data-dock-section={sectionName} className="py-32 px-6 relative overflow-hidden flex items-center justify-center text-center">
             {bgKey && item[bgKey] ? (
                 <div className="absolute inset-0 z-0">
-                    <img src={item[bgKey]} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.bgKey`} />
+                    <img src={getImageUrl(item[bgKey])} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.bgKey`} />
                     <div className="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
                 </div>
             ) : (

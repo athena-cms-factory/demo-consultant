@@ -1,4 +1,5 @@
 import React from 'react';
+import { getImageUrl } from '../utils/paths';
 import { useCart } from './CartContext';
 
 const ProductGrid = ({ data, sectionName, features = {} }) => {
@@ -25,7 +26,7 @@ const ProductGrid = ({ data, sectionName, features = {} }) => {
                         return (
                             <article key={index} className="flex flex-col bg-surface rounded-[2.5rem] shadow-xl overflow-hidden transition-all hover:-translate-y-2 hover:shadow-2xl group border border-slate-100">
                                 <div className="aspect-square overflow-hidden flex-shrink-0 relative">
-                                    <img src={item[imgKey]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
+                                    <img src={getImageUrl(item[imgKey])} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
                                     <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
                                 </div>
                                 <div className="p-8 flex flex-col flex-grow text-center">
