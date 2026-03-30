@@ -2,29 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { StyleInjector } from './components/StyleInjector';
 
 // 🔱 Athena v33 Modular Sync Bridge for Bakkerij
-function App() {
-  const [data, setData] = useState(null);
-  const [sectionOrder, setSectionOrder] = useState([]);
-  const [loading, setLoading] = useState(true);
+function App({ data: initialData }) {
+  const [data, setData] = useState(initialData || {});
+  const [sectionOrder, setSectionOrder] = useState(initialData?.section_order || []);
+  const [loading, setLoading] = useState(!initialData);
 
   const refreshData = async () => {
+    // Only attempt live fetch in Development mode or for the Dashboard Bridge
+    if (!import.meta.env.DEV) {
+      if (!sectionOrder.length && initialData?.section_order) setSectionOrder(initialData.section_order);
+      setLoading(false);
+      return;
+    }
+
     try {
+      // Live fetch fallback (Development/Dock only)
       const orderRes = await fetch(`${import.meta.env.BASE_URL}src/data/section_order.json?v=${Date.now()}`);
-      const order = await orderRes.json();
-      setSectionOrder(order);
+      if (orderRes.ok) {
+        setSectionOrder(await orderRes.json());
+      }
 
       const files = ['site_settings', 'kenmerken', 'style_config'];
-      const loadedData = {};
+      const currentData = { ...data };
       for (const file of files) {
         try {
           const res = await fetch(`${import.meta.env.BASE_URL}src/data/${file}.json?v=${Date.now()}`);
-          loadedData[file] = await res.json();
-        } catch (e) { loadedData[file] = []; }
+          if (res.ok) currentData[file] = await res.json();
+        } catch (e) { /* Fallback */ }
       }
-      setData(loadedData);
+      setData(currentData);
       setLoading(false);
     } catch (err) {
-      console.error("🔱 Athena Sync Error:", err);
+      console.warn("🔱 Athena Sync: Live fetch ignored.");
       setLoading(false);
     }
   };

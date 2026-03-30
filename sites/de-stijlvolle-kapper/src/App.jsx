@@ -2,37 +2,43 @@ import React, { useState, useEffect } from 'react';
 import { StyleInjector } from './components/StyleInjector';
 
 // 🔱 Athena v33 Modular Sync Bridge
-function App() {
-  const [data, setData] = useState(null);
-  const [sectionOrder, setSectionOrder] = useState([]);
-  const [loading, setLoading] = useState(true);
+function App({ data: initialData }) {
+  const [data, setData] = useState(initialData || {});
+  const [sectionOrder, setSectionOrder] = useState(initialData?.section_order || []);
+  const [loading, setLoading] = useState(!initialData);
 
   const refreshData = async () => {
-    try {
-      // 1. Laad Sectie Volgorde
-      const orderRes = await fetch(`${import.meta.env.BASE_URL}src/data/section_order.json?v=${Date.now()}`);
-      const order = await orderRes.json();
-      setSectionOrder(order);
+    // Only attempt live fetch in Development mode or for the Dashboard Bridge
+    if (!import.meta.env.DEV) {
+      if (!sectionOrder.length && initialData?.section_order) setSectionOrder(initialData.section_order);
+      setLoading(false);
+      return;
+    }
 
-      // 2. Laad Geaggregeerde Data (of afzonderlijke bestanden)
-      // Voor deze upgrade laden we direct de bestanden uit de data map
+    try {
+      // 1. Laad Sectie Volgorde (Development/Dock only)
+      const orderRes = await fetch(`${import.meta.env.BASE_URL}src/data/section_order.json?v=${Date.now()}`);
+      if (orderRes.ok) {
+        setSectionOrder(await orderRes.json());
+      }
+
+      // 2. Laad Geaggregeerde Data (Development/Dock only)
       const files = ['site_settings', 'diensten', 'style_config'];
-      const loadedData = {};
+      const currentData = { ...data };
       
       for (const file of files) {
         try {
           const res = await fetch(`${import.meta.env.BASE_URL}src/data/${file}.json?v=${Date.now()}`);
-          loadedData[file] = await res.json();
+          if (res.ok) currentData[file] = await res.json();
         } catch (e) {
-          console.warn(`⚠️ Kon ${file}.json niet laden, fallback naar leeg.`);
-          loadedData[file] = [];
+          console.warn(`⚠️ Kon ${file}.json niet laden.`);
         }
       }
       
-      setData(loadedData);
+      setData(currentData);
       setLoading(false);
     } catch (err) {
-      console.error("🔱 Athena Sync Error:", err);
+      console.warn("🔱 Athena Sync: Live fetch ignored.");
       setLoading(false);
     }
   };
