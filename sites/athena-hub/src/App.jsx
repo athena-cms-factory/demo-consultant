@@ -10,7 +10,6 @@ import Footer from './components/Footer';
 import { DisplayConfigProvider } from './components/DisplayConfigContext';
 
 const App = ({ data: initialData }) => {
-  const [data, setData] = useState(initialData || {});
   const [loading, setLoading] = useState(!initialData);
   const [data, setData] = useState(() => {
     const saved = sessionStorage.getItem('athena_live_overrides');
