@@ -4,35 +4,36 @@ import { StyleInjector } from './components/StyleInjector';
 // 🔱 Athena v33 Modular Sync Bridge for Academy-1
 function App({ data: initialData }) {
   const [data, setData] = useState(initialData || {});
-  const [sectionOrder, setSectionOrder] = useState([]);
+  const [sectionOrder, setSectionOrder] = useState(initialData?.section_order || []);
   const [loading, setLoading] = useState(!initialData);
 
   const refreshData = async () => {
+    // Only attempt live fetch in Development mode or for the Dashboard Bridge
+    if (!import.meta.env.DEV) {
+      if (!sectionOrder.length && initialData?.section_order) setSectionOrder(initialData.section_order);
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Try to fetch live data (Modular Sync Bridge / Dashboard Dock)
+      // Live fetch fallback (Development/Dock only)
       const orderRes = await fetch(`${import.meta.env.BASE_URL}src/data/section_order.json?v=${Date.now()}`);
       if (orderRes.ok) {
-        const order = await orderRes.json();
-        setSectionOrder(order);
-      } else if (initialData?.Section_Order) {
-        setSectionOrder(initialData.Section_Order);
+        setSectionOrder(await orderRes.json());
       }
 
       const files = ['site_settings', 'cursussen', 'docenten', 'reviews', 'style_config'];
-      const loadedData = { ...data };
+      const currentData = { ...data };
       for (const file of files) {
         try {
           const res = await fetch(`${import.meta.env.BASE_URL}src/data/${file}.json?v=${Date.now()}`);
-          if (res.ok) {
-            loadedData[file] = await res.json();
-          }
-        } catch (e) { /* Fallback to existing data */ }
+          if (res.ok) currentData[file] = await res.json();
+        } catch (e) { /* Fallback */ }
       }
-      setData(loadedData);
+      setData(currentData);
       setLoading(false);
     } catch (err) {
-      console.warn("🔱 Athena Sync: Live fetch ignored (expected in production). Using bundled data.");
-      if (initialData?.Section_Order) setSectionOrder(initialData.Section_Order);
+      console.warn("🔱 Athena Sync: Live fetch ignored.");
       setLoading(false);
     }
   };
