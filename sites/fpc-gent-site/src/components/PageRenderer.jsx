@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Section from './Section'; 
 
 export default function PageRenderer({ file }) {
-    const [data, setData] = useState(null);
+    const [data, setData] = useState(initialData || {});
     const [styles, setStyles] = useState({});
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(!initialData);
     const [error, setError] = useState(null);
 
     // 1. Laden van data en styles

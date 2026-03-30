@@ -18,8 +18,8 @@ async function init() {
     const tableData = dataFiles[path].default || dataFiles[path];
     
     // Preserve the original transformation logic for keys
-    const camelKey = fileName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('_');
-    data[camelKey] = tableData;
+    const camelKey = fileName;
+    data[fileName] = tableData;
     
     if (Array.isArray(tableData)) totalRows += tableData.length;
   });

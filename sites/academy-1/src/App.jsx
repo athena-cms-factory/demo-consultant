@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { StyleInjector } from './components/StyleInjector';
 
 // 🔱 Athena v33 Modular Sync Bridge for Academy-1
-function App() {
-  const [data, setData] = useState(null);
-  const [sectionOrder, setSectionOrder] = useState([]);
-  const [loading, setLoading] = useState(true);
+function App({ data: initialData }) {
+  const [data, setData] = useState(initialData || {});
+  const [sectionOrder, setSectionOrder] = useState(initialData?.section_order || []);
+  const [loading, setLoading] = useState(!initialData);
 
   const refreshData = async () => {
+    if (!import.meta.env.DEV) {
+      setLoading(false);
+      return;
+    }
     try {
       const orderRes = await fetch(`${import.meta.env.BASE_URL}src/data/section_order.json?v=${Date.now()}`);
       const order = await orderRes.json();
