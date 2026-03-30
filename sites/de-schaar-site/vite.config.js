@@ -26,8 +26,8 @@ export default defineConfig(async ({ command }) => {
   }
 
   return {
-    // Gebruik relatieve paden voor maximale compatibiliteit (Dock & GitHub Pages)
-    base: process.env.NODE_ENV === 'production' ? '/de-schaar-site/' : '/', 
+    // Gebruik de nieuwe repository naam voor productie deployment
+    base: process.env.NODE_ENV === 'production' ? '/athena-de-schaar/' : '/', 
     plugins: [
       react(),
       tailwindcss(),
