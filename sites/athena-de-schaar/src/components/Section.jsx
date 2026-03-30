@@ -169,11 +169,11 @@ const Section = ({ data }) => {
               <div className="max-w-6xl mx-auto">
                 <header className="mb-24 text-center max-w-3xl mx-auto group/header relative">
                   <h2 className="text-5xl md:text-6xl font-serif font-bold mb-8 text-[var(--color-heading)] text-center">
-                    <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
+                    <span data-dock-type="text" data-dock-bind={JSON.stringify(metaBind('title'))}>{getText(sectionTitle)}</span>
                   </h2>
                   <div className="h-1.5 w-12 mx-auto mb-8 bg-accent"></div>
                   <div className="text-xl italic font-light opacity-60 text-text text-center">
-                    <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
+                    <span data-dock-type="text" data-dock-bind={JSON.stringify(metaBind('subtitle'))}>{sectionSubtitle}</span>
                   </div>
                 </header>
 
@@ -237,11 +237,11 @@ const Section = ({ data }) => {
 
               <header className="mb-24 text-center max-w-3xl mx-auto group/header relative">
                 <h2 className="text-5xl md:text-6xl font-serif font-bold mb-8 text-[var(--color-heading)] text-center">
-                  <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
+                  <span data-dock-type="text" data-dock-bind={JSON.stringify(metaBind('title'))}>{getText(sectionTitle)}</span>
                 </h2>
                 <div className="h-1.5 w-12 mx-auto mb-8 bg-accent"></div>
                 <div className="text-xl italic font-light opacity-60 text-text text-center">
-                  <span data-dock-type="text" data-dock-bind="site_settings.0.titel">...</span>
+                  <span data-dock-type="text" data-dock-bind={JSON.stringify(metaBind('subtitle'))}>{sectionSubtitle}</span>
                 </div>
               </header>
 
