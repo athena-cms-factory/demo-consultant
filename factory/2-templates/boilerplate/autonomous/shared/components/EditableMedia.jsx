@@ -69,7 +69,7 @@ export default function EditableMedia({ src, alt, className, cmsBind, ...props }
     }
   };
 
-  const cleanSrc = src && src.startsWith('images/') ? src.replace('images/', '') : cleanSrc; 
+  const cleanSrc = src && src.startsWith('images/') ? src.replace('images/', '') : src; 
   const finalSrc = (cleanSrc && !cleanSrc.startsWith('http') && !cleanSrc.startsWith('/') && !cleanSrc.startsWith('data:'))
     ? `${import.meta.env.BASE_URL}images/${cleanSrc}`.replace(/\/+/g, '/')
     : cleanSrc;

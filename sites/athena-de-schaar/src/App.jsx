@@ -9,7 +9,6 @@ import StyleInjector from './components/StyleInjector';
 const App = ({ data: initialData }) => {
   const [data, setData] = useState(initialData || {});
   const [loading, setLoading] = useState(!initialData);
-  const [data, setData] = useState(initialData);
 
   useEffect(() => {
     const handleMessage = (event) => {

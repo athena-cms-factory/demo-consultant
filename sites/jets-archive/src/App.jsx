@@ -10,7 +10,6 @@ import Footer from './components/Footer';
 const App = ({ data: initialData }) => {
   const [data, setData] = useState(initialData || {});
   const [loading, setLoading] = useState(!initialData);
-  const [data, setData] = useState(initialData);
   const [selectedDecades, setSelectedDecades] = useState([]); // Empty array means 'All'
 
   useEffect(() => {

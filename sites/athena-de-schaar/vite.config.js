@@ -26,8 +26,8 @@ export default defineConfig(async ({ command }) => {
   }
 
   return {
-    // Gebruik relatieve paden voor maximale compatibiliteit (Dock & GitHub Pages)
-    base: process.env.NODE_ENV === 'production' ? '/de-schaar-site/' : '/', 
+    // Gebruik de subpath 'athena-de-schaar' voor zowel productie (GitHub) als local (Dock)
+    base: '/athena-de-schaar/', 
     plugins: [
       react(),
       tailwindcss(),
@@ -47,11 +47,12 @@ export default defineConfig(async ({ command }) => {
     server: {
       cors: true,
       host: true,
-      port: parseInt(process.env.PORT) || 6110,
+      port: 5100, // Poort 5100 conform de URL van de gebruiker
       allowedHosts: true, 
       hmr: {
-        host: true,
-        port: parseInt(process.env.PORT) || 6110
+        // host: true was de oorzaak van de ws://true fout. 
+        // Door host weg te laten (of op undefined te zetten) pakt Vite automatisch de juiste host.
+        port: 5100 
       }
     },
     build: {

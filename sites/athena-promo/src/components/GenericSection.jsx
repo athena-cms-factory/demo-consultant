@@ -34,6 +34,13 @@ const GenericSection = ({ data, sectionName, layout = 'list', features = {}, sty
         return null;
     };
 
+    const getImageUrl = (url) => {
+        if (!url) return '';
+        if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('blob:')) return url;
+        const base = import.meta.env.BASE_URL || '/';
+        return `${base}images/${url}`.replace(/\/+/g, '/');
+    };
+
     return (
         <section id={sectionName} data-dock-section={sectionName} className="py-24 px-6 bg-[var(--color-background)] text-[var(--color-text)]" style={style}>
             <div className="max-w-6xl mx-auto">
@@ -58,7 +65,7 @@ const GenericSection = ({ data, sectionName, layout = 'list', features = {}, sty
                                 <div key={index} className="flex flex-col overflow-hidden bg-white/5 backdrop-blur-sm rounded-[2.5rem] shadow-xl border border-white/10 hover:border-accent/30 transition-all duration-500 group">
                                     {imgKey && item[imgKey] && (
                                         <div className="w-full aspect-video overflow-hidden">
-                                            <img src={item[imgKey]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
+                                            <img src={getImageUrl(item[imgKey])} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
                                         </div>
                                     )}
                                     <div className="p-10 flex flex-col items-center text-center flex-1">
@@ -89,7 +96,7 @@ const GenericSection = ({ data, sectionName, layout = 'list', features = {}, sty
                             <div key={index} className={`flex flex-col items-center text-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-12 md:gap-20`}>
                                 {imgKey && item[imgKey] && (
                                     <div className="w-full md:w-1/2 aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl rotate-1 group hover:rotate-0 transition-transform duration-500 border-8 border-white/5">
-                                        <img src={item[imgKey]} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
+                                        <img src={getImageUrl(item[imgKey])} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
                                     </div>
                                 )}
                                 <div className="flex-1">

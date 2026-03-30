@@ -10,7 +10,6 @@ import Footer from './components/Footer';
 import { DisplayConfigProvider } from './components/DisplayConfigContext';
 
 const App = ({ data: initialData }) => {
-  const [data, setData] = useState(initialData || {});
   const [loading, setLoading] = useState(!initialData);
   // Support voor de Modular v8.8 structuur (met _ prefix voor config)
   const getSafeData = (key, fallback = initialData) => fallback[key] || fallback[`_${key}`] || [];

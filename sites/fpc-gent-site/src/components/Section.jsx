@@ -5,6 +5,16 @@ export default function Section({ data, pageFile, sectionIndex }) {
     const { type, content: rawContent } = data;
     const content = rawContent || {};
 
+    // Helper voor slimme URL afhandeling (v33 Standard)
+    const getImageUrl = (url) => {
+        if (!url) return '';
+        if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('blob:')) return url;
+        const base = import.meta.env.BASE_URL || '/';
+        // Als het geen pad bevat, staat het in public/images/
+        if (!url.includes('/')) return `${base}images/${url}`.replace(/\/+/g, '/');
+        return `${base}${url.startsWith('/') ? url.slice(1) : url}`.replace(/\/+/g, '/');
+    };
+
     // Globale pagina data voor style bindings
     const styleBindings = data.style_bindings || {};
 
@@ -75,7 +85,7 @@ export default function Section({ data, pageFile, sectionIndex }) {
                         </div>
                         <div className="w-full md:w-1/2">
                             <div className="aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-700">
-                                <img src={} data-dock-type="media" data-dock-bind="site_settings.0.titel" />
+                                <img src={getImageUrl(content.afbeelding || content.image || content.foto)} data-dock-type="media" data-dock-bind="section.0.afbeelding" />
                             </div>
                         </div>
                     </div>
@@ -122,7 +132,7 @@ export default function Section({ data, pageFile, sectionIndex }) {
                                     <CardWrapper key={i} className="bg-white p-2 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all group border border-slate-100 flex flex-col relative">
                                         {itemImg ? (
                                             <div className="aspect-video rounded-[2rem] overflow-hidden mb-6">
-                                                <img src={} data-dock-type="media" data-dock-bind="site_settings.0.titel" />
+                                                <img src={getImageUrl(itemImg)} data-dock-type="media" data-dock-bind={`section.items.${i}.afbeelding`} />
                                             </div>
                                         ) : (
                                             /* Spacer for text-only cards */
@@ -211,7 +221,7 @@ export default function Section({ data, pageFile, sectionIndex }) {
                         {hasImage && (
                             <div className="md:w-2/5 w-full">
                                 <div className="aspect-square rounded-[3rem] overflow-hidden shadow-xl border-8 border-slate-50">
-                                    <img src={} data-dock-type="media" data-dock-bind="site_settings.0.titel" />
+                                    <img src={getImageUrl(content.afbeelding || content.image || content.foto)} data-dock-type="media" data-dock-bind="section.0.afbeelding" />
                                 </div>
                             </div>
                         )}

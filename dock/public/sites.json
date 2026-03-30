@@ -249,35 +249,6 @@
     "port": 5860
   },
   {
-    "id": "athena-hub",
-    "name": "athena-hub",
-    "siteType": "professional-service-provider",
-    "generatedAt": "2026-02-04T15:55:23.382Z",
-    "governance_mode": "dev-mode",
-    "repoUrl": "https://github.com/athena-cms-factory/athena-hub",
-    "liveUrl": "https://athena-cms-factory.github.io/athena-hub",
-    "port": 6041
-  },
-  {
-    "id": "athena-pro",
-    "name": "athena-pro",
-    "siteType": "professional-service-provider",
-    "generatedAt": "2026-01-30T11:33:00.674Z",
-    "governance_mode": "dev-mode",
-    "repoUrl": "https://github.com/athena-cms-factory/athena-pro",
-    "liveUrl": "https://athena-cms-factory.github.io/athena-pro",
-    "port": 6001
-  },
-  {
-    "id": "bakkerij-de-graankorrel",
-    "name": "bakkerij-de-graankorrel",
-    "siteType": "basis",
-    "governance_mode": "dev-mode",
-    "repoUrl": "https://github.com/athena-cms-factory/bakkerij-de-graankorrel",
-    "liveUrl": "https://athena-cms-factory.github.io/bakkerij-de-graankorrel",
-    "port": 5007
-  },
-  {
     "id": "demo-bakkerij",
     "name": "demo-bakkerij",
     "siteType": "chocolade-shop-type",
@@ -318,6 +289,16 @@
     "port": 5736
   },
   {
+    "id": "athena-hub",
+    "name": "athena-hub",
+    "siteType": "professional-service-provider",
+    "generatedAt": "2026-02-04T15:55:23.382Z",
+    "governance_mode": "dev-mode",
+    "repoUrl": "https://github.com/athena-cms-factory/athena-hub",
+    "liveUrl": "https://athena-cms-factory.github.io/athena-hub",
+    "port": 6041
+  },
+  {
     "id": "karel-portfolio-ath",
     "name": "karel-portfolio-ath",
     "siteType": "karel-portfolio-ath",
@@ -336,6 +317,16 @@
     "repoUrl": "https://github.com/athena-cms-factory/karel-webdesign",
     "liveUrl": "https://athena-cms-factory.github.io/karel-webdesign",
     "port": 6105
+  },
+  {
+    "id": "athena-pro",
+    "name": "athena-pro",
+    "siteType": "professional-service-provider",
+    "generatedAt": "2026-01-30T11:33:00.674Z",
+    "governance_mode": "dev-mode",
+    "repoUrl": "https://github.com/athena-cms-factory/athena-pro",
+    "liveUrl": "https://athena-cms-factory.github.io/athena-pro",
+    "port": 6001
   },
   {
     "id": "nieuwe-tanden",
@@ -368,14 +359,23 @@
     "port": 6101
   },
   {
-    "id": "de-schaar-site",
+    "id": "athena-de-schaar",
     "name": "de-schaar-site",
     "siteType": "de-schaar-type",
     "generatedAt": "2026-01-22T15:08:39.843Z",
     "governance_mode": "dev-mode",
     "repoUrl": "https://github.com/athena-cms-factory/de-schaar-site",
     "liveUrl": "https://athena-cms-factory.github.io/de-schaar-site",
-    "port": 6110
+    "port": 3000
+  },
+  {
+    "id": "bakkerij-de-graankorrel",
+    "name": "bakkerij-de-graankorrel",
+    "siteType": "basis",
+    "governance_mode": "dev-mode",
+    "repoUrl": "https://github.com/athena-cms-factory/bakkerij-de-graankorrel",
+    "liveUrl": "https://athena-cms-factory.github.io/bakkerij-de-graankorrel",
+    "port": 5007
   },
   {
     "id": "de-stijlvolle-kapper",

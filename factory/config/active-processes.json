@@ -1,1 +1,16 @@
-{}
+{
+  "5002": {
+    "pid": 7623,
+    "id": "athena-dock",
+    "type": "dock",
+    "startTime": "2026-03-30T18:32:23.492Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/athena-dock-dock.log"
+  },
+  "6103": {
+    "pid": 25840,
+    "id": "fpc-gent-site",
+    "type": "preview",
+    "startTime": "2026-03-30T19:28:54.715Z",
+    "logFile": "/home/kareltestspecial/0-IT/2-Productie/athena/factory/output/logs/fpc-gent-site-preview.log"
+  }
+}

@@ -17,10 +17,17 @@ const Team = ({ data, sectionName }) => {
                         const bioKey = Object.keys(item).find(k => /tekst|bio|beschrijving/i.test(k)) || 'bio';
                         const imgKey = Object.keys(item).find(k => /foto|afbeelding/i.test(k)) || 'foto';
 
+                        const getImageUrl = (url) => {
+                            if (!url) return '';
+                            if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('blob:')) return url;
+                            const base = import.meta.env.BASE_URL || '/';
+                            return `${base}images/${url}`.replace(/\/+/g, '/');
+                        };
+
                         return (
                             <div key={index} className="flex flex-col items-center text-center group">
                                 <div className="w-48 h-48 rounded-full overflow-hidden mb-6 border-4 border-white shadow-2xl group-hover:scale-105 transition-transform duration-300 ring-4 ring-transparent hover:ring-accent/30 relative">
-                                    <img src={item[imgKey]} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
+                                    <img src={getImageUrl(item[imgKey])} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
                                 </div>
                                 <h3 className="text-xl font-bold text-primary mb-1">
                                     <span data-dock-type="text" data-dock-bind={`sectionName.0.naamKey`}>{item[naamKey]}</span>

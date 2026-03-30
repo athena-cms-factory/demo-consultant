@@ -17,6 +17,13 @@ const GenericSection = ({ data, sectionName, layout = 'list', features = {}, sty
         'rocket': 'fa-rocket'
     };
 
+    const getImageUrl = (url) => {
+        if (!url) return '';
+        if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('blob:')) return url;
+        const base = import.meta.env.BASE_URL || '/';
+        return `${base}images/${url}`.replace(/\/+/g, '/');
+    };
+
     const getGoogleSearchUrl = (query) => {
         return `https://www.google.com/search?q=${encodeURIComponent(query + ' ' + (features.search_context || ''))}`;
     };
@@ -65,7 +72,7 @@ const GenericSection = ({ data, sectionName, layout = 'list', features = {}, sty
                             <div key={index} className={`flex flex-col items-center text-center ${layout === 'list' ? '' : (isEven ? 'md:flex-row' : 'md:flex-row-reverse')} gap-12 md:gap-20`}>
                                 {imgKey && item[imgKey] && (
                                     <div className="w-full md:w-1/2 aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl rotate-1 group hover:rotate-0 transition-transform duration-500 border-8 border-white">
-                                        <img src={item[imgKey]} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
+                                        <img src={getImageUrl(item[imgKey])} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
                                     </div>
                                 )}
                                 <div className="flex-1">

@@ -5,6 +5,16 @@ const Section = ({ data }) => {
   const layoutSettings = data.layout_settings || {};
   const sectionSettings = data.section_settings || {};
 
+  // Helper voor slimme URL afhandeling (v33 Standard)
+  const getImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('blob:')) return url;
+    const base = import.meta.env.BASE_URL || '/';
+    // Als het geen pad bevat, staat het in public/images/
+    if (!url.includes('/')) return `${base}images/${url}`.replace(/\/+/g, '/');
+    return `${base}${url.startsWith('/') ? url.slice(1) : url}`.replace(/\/+/g, '/');
+  };
+
   const iconMap = {
     'table': 'fa-table-columns',
     'zap': 'fa-bolt-lightning',
@@ -50,7 +60,7 @@ const Section = ({ data }) => {
               className="relative w-full h-auto min-h-[85vh] flex items-center justify-center overflow-hidden bg-slate-900 pt-24"
             >
               <div className="absolute inset-0 z-0">
-                <img src={hero[imgKey] || "site-logo.svg"} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
+                <img src={getImageUrl(hero[imgKey] || "site-logo.svg")} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.0.imgKey`} />
                 <div className="absolute inset-0 z-20 pointer-events-none" style={{
                   backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.15))'
                 }}></div>
@@ -86,7 +96,7 @@ const Section = ({ data }) => {
               <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row items-center gap-16 md:gap-24">
                   <div className="w-full md:w-1/2 aspect-square md:aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-700">
-                    <img src={img} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind="contact.0.afbeelding" />
+                    <img src={getImageUrl(img)} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind="contact.0.afbeelding" />
                   </div>
                   <div className="flex-1 space-y-8">
                     <div className="inline-block px-4 py-1.5 bg-accent/10 text-accent rounded-full text-xs font-black uppercase tracking-widest">Contact</div>
@@ -183,7 +193,7 @@ const Section = ({ data }) => {
                     <div key={index} className="flex flex-col items-center text-center bg-slate-50 p-10 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300">
                       {img && (
                         <div className="w-full aspect-[4/3] rounded-[2rem] overflow-hidden mb-8 shadow-inner">
-                          <img src={img} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.${index}.${item.afbeelding}`} />
+                          <img src={getImageUrl(img)} className="w-full h-full object-cover" data-dock-type="media" data-dock-bind={`sectionName.${index}.${item.afbeelding}`} />
                         </div>
                       )}
                       {title && (

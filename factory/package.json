@@ -3,7 +3,7 @@
   "version": "9.1.0",
   "type": "module",
   "scripts": {
-    "start": "node dashboard/athena.js",
+    "start": "bash athena.sh",
     "onboard": "node 5-engine/onboarding-wizard.js",
     "wizard": "node 5-engine/site-wizard.js",
     "lego": "node 9-engine/cli.js",
