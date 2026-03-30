@@ -26,6 +26,6 @@ We schrijven/gebruiken een AST of Regex gebaseerd script (`factory/6-utilities/b
 Verwijder de ongebruikte `Editable*.jsx` bestanden uit de sites om de codebase schoon te houden.
 
 ## Verification
-- Herstart de Reviewer (`ath-stop && ath-x`).
+- Herstart de Reviewer (`ath-stop && athena-x-factory`).
 - Test een oude site (zoals `athena-promo`) en een nieuwe site (`academy-1`).
 - Beide moeten naadloos navigeren bij een normale klik en de Dock Editor triggeren bij een Shift+Klik.

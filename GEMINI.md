@@ -19,7 +19,7 @@ The primary development machine is a Chromebook with limited resources (16GB RAM
 
 ## 🛡️ Git Governance & Environment Isolation (v8.2)
 - **Environment Isolation**: Er is een strikte scheiding tussen de monorepo's:
-    - `KarelTestSpecial/athena-x` (Development) ➔ Pusht naar GitHub organisatie `ath-x`.
+    - `KarelTestSpecial/athena-x` (Development) ➔ Pusht naar GitHub organisatie `athena-x-factory`.
     - `athena-cms-factory/athena` (Production) ➔ Pusht naar GitHub organisatie `athena-cms-factory`.
 - **Backup Protocol**: Elke significante release naar productie moet voorafgegaan worden door een backup van de productie-organisatie naar de `bUP` organisatie via `factory/6-utilities/backup-org.sh`.
 

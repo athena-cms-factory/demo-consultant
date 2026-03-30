@@ -94,6 +94,9 @@ jobs:
           if [ "${{ github.repository }}" == "athenacodeone/x1" ]; then
             TARGET_ORG="athenasite"
             echo "🔱 Athena One environment detected. Targeting organization: $TARGET_ORG"
+          elif [ "${{ github.repository }}" == "athenacmsfactory/athena-x" ]; then
+            TARGET_ORG="athena-x-factory"
+            echo "🛠️ Development environment detected. Targeting organization: $TARGET_ORG"
           else
             TARGET_ORG="athena-cms-factory"
             echo "🚀 Production environment detected. Targeting organization: $TARGET_ORG"
