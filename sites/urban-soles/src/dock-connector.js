@@ -215,7 +215,7 @@
 
                 if (dockType === 'media') {
                     const src = (value && !value.startsWith('http') && !value.startsWith('/') && !value.startsWith('data:'))
-                        ? `${baseUrl}images/${value}`.replace(/\/+/g, '/')
+                        ? `${baseUrl}${value.startsWith('images/') ? '' : 'images/'}${value}`.replace(/\/+/g, '/')
                         : (value || "");
 
                     const mediaEl = (el.tagName === 'IMG' || el.tagName === 'VIDEO') ? el : el.querySelector('img, video');

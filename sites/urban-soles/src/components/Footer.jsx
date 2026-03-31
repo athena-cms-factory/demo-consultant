@@ -14,9 +14,10 @@ export default function Footer({ data }) {
   const getImageUrl = (url) => {
     if (!url) return '';
     if (typeof url === 'object') url = url.text || url.url || '';
-    if (url.startsWith('http') || url.startsWith('data:')) return url;
+    if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('/')) return url;
     const base = import.meta.env.BASE_URL || '/';
-    return (base + '/images/' + url).replace(new RegExp('/+', 'g'), '/');
+    const path = url.startsWith('images/') ? url : `images/${url}`;
+    return (base + '/' + path).replace(new RegExp('/+', 'g'), '/');
   };
 
   return (
